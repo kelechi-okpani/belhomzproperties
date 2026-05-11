@@ -1,111 +1,139 @@
+'use client';
 
 import HeroSlider from '@/components/Home/hero-slider';
+import HeroVideo from '@/components/Home/HeroVideo';
 import HeroVideoSection from '@/components/Home/HeroVideoSection';
 import HowWeWork from '@/components/Home/HowWeWork';
-import ImageGrid from '@/components/Home/image-grid';
 import ContinuousCarousel from '@/components/Home/ImageGrid';
 import ListingCard from '@/components/Home/ListingCard';
-import LuxuryVideoGallery from '@/components/Home/ReelsCarousel';
+import NeighborhoodBento from '@/components/Home/Neighborhood';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ShieldCheck, MapPin, BadgeCheck, Phone } from 'lucide-react';
+import { ArrowRight, Phone, MapPin, ArrowUpRight } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background selection:bg-primary selection:text-primary-foreground">
-
-
-      {/* 1. HERO SECTION (Visual Dominance) */}
-      <HeroSlider />
-
-      <ContinuousCarousel />
-
-      <HeroVideoSection />
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground">
       
-      <LuxuryVideoGallery/>
+      {/* 1. HERO SECTION */}
+      <section className="relative">
+        <HeroVideo />
+        {/* <HeroSlider /> */}
+   
+      </section>
 
-  
 
-    
+     {/* Subtle Brand Bar */}
+      
+      {/* 2. ARCHITECTURAL VIDEO SECTION */}
+      <section className="py-28 border-b border-border">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-16">
+            <div className="lg:col-span-7">
+              <h2 className="text-5xl md:text-7xl font-bold tracking-tighter leading-[0.9]">
+                Redefining the <br /> <span className="text-muted-foreground font-light italic">Abuja Skyline.</span>
+              </h2>
+            </div>
+            <div className="lg:col-span-5">
+              <p className="text-lg text-muted-foreground max-w-md">
+                Belhomz bridges the gap between ambitious architectural vision and premium residential reality.
+              </p>
+            </div>
+          </div>
+          <div className="rounded-[2rem] overflow-hidden border border-border shadow-2xl">
+            <HeroVideoSection />
+          </div>
+        </div>
+      </section>
 
-      {/* 3. FEATURED PROPERTIES (Social Proof & Urgency) */}
-    <ListingCard/>
 
-      {/* 4. KEY NEIGHBORHOODS (Visual Categories) */}
-      <section className="py-24 px-6 max-w-7xl mx-auto">
-        <h3 className="text-3xl font-bold mb-12 text-center">Exclusive Neighborhoods</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div className=" bottom-0 w-full bg-background/80 backdrop-blur-md border-t border-border py-4 overflow-hidden">
+          <ContinuousCarousel />
+        </div>
+
+        
+      {/* 3. FEATURED LISTINGS */}
+      <section className="py-24 bg-secondary">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <span className="text-xs uppercase tracking-[0.3em] text-primary/60 font-bold">Curated Selection</span>
+              <h3 className="text-4xl font-bold mt-2">Featured Estates</h3>
+            </div>
+            <Button variant="link" className="group text-lg">
+              View Listings <ArrowUpRight className="ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </Button>
+          </div>
+          <ListingCard />
+        </div>
+      </section>
+
+      {/* 4. EXCLUSIVE NEIGHBORHOODS - Bento Grid Style */}
+        <NeighborhoodBento/>
+
+      {/* 5. STATISTICS - Minimalist High Contrast */}
+      <section className="py-24 border-y border-border bg-background">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12">
           {[
-            { name: 'Maitama, Abuja', img: 'https://images.unsplash.com/photo-1590644365607-1c5a519a7a37', count: '42 Properties' },
-            { name: 'Ikoyi, Lagos', img: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be', count: '28 Properties' },
-            { name: 'Guzape, Abuja', img: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf', count: '15 Properties' },
-          ].map((loc) => (
-            <div key={loc.name} className="relative h-[400px] rounded-2xl overflow-hidden group cursor-pointer">
-              <div className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-500" style={{ backgroundImage: `url(${loc.img})` }} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 text-white">
-                <p className="text-sm opacity-80">{loc.count}</p>
-                <h4 className="text-xl font-bold">{loc.name}</h4>
-              </div>
+            { val: '₦15B+', label: 'Portfolio Value' },
+            { val: '500+', label: 'Happy Clients' },
+            { val: '12+', label: 'Prime Locations' },
+            { val: '100%', label: 'Title Verified' },
+          ].map((stat, i) => (
+            <div key={i} className="space-y-2 border-l border-primary/10 pl-6">
+              <h5 className="text-5xl font-bold tracking-tighter">{stat.val}</h5>
+              <p className="text-muted-foreground uppercase text-xs tracking-widest font-semibold">{stat.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 5. THE PROCESS (Building Trust) */}
-        <HowWeWork />
+      {/* 6. THE PROCESS */}
+      <HowWeWork />
 
-      {/* 6. STATISTICS (Proof of Scale) */}
-      <section className="py-20 border-b">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div><h5 className="text-4xl font-bold">₦15B+</h5><p className="text-muted-foreground">Portfolio Value</p></div>
-          <div><h5 className="text-4xl font-bold">500+</h5><p className="text-muted-foreground">Happy Clients</p></div>
-          <div><h5 className="text-4xl font-bold">12+</h5><p className="text-muted-foreground">Prime Locations</p></div>
-          <div><h5 className="text-4xl font-bold">100%</h5><p className="text-muted-foreground">Title Verification</p></div>
-        </div>
-      </section>
-
-      {/* 7. AGENT/MAESTRO SECTION (Personalization) */}
-      <section className="py-24 px-6 max-w-7xl mx-auto bg-primary/5 rounded-[3rem] my-12">
-        <div className="flex flex-col md:flex-row gap-12 items-center">
-          <div className="flex-1">
-            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a" className="rounded-2xl w-full h-[500px] object-cover grayscale hover:grayscale-0 transition-all" alt="Agent" />
+      {/* 7. CONSULTANT SECTION - Glassmorphism & Contrast */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="bg-primary text-primary-foreground rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-stretch">
+          <div className="flex-1 min-h-[400px]">
+            <img 
+               src="home/boss1.png" 
+               className="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-700" 
+               alt="Consultant" 
+            />
           </div>
-          <div className="flex-1 space-y-6">
-            <h3 className="text-4xl font-bold">Speak with a Consultant</h3>
-            <p className="text-lg text-muted-foreground italic">"Our mission is to bridge the gap between architectural vision and your reality. We don't just sell property; we curate futures."</p>
-            <div className="flex gap-4">
-              <Button size="lg" className="rounded-full bg-primary"><Phone className="mr-2" /> Call Now</Button>
-              <Button size="lg" variant="outline" className="rounded-full">WhatsApp</Button>
+          <div className="flex-1 p-12 md:p-20 flex flex-col justify-center space-y-8">
+            <h3 className="text-4xl md:text-5xl font-bold leading-tight">Personalized <br /> Property Mastery.</h3>
+            <p className="text-xl text-primary-foreground/80 font-light italic leading-relaxed">
+              "We don't just sell property; we curate futures by bridging the gap between architectural vision and your reality."
+            </p>
+            <div className="flex flex-wrap gap-4 pt-4">
+              <Button size="lg" className="rounded-full bg-background text-foreground hover:bg-background/90 px-8">
+                <Phone className="mr-2 h-5 w-5" /> Call Expert
+              </Button>
+              <Button size="lg" variant="outline" className="rounded-full border-primary-foreground/20 hover:bg-primary-foreground/10 px-8">
+                WhatsApp
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 8. TESTIMONIALS (Social Proof) */}
-      <section className="py-24 text-center">
-        <div className="max-w-3xl mx-auto px-6">
-          <h3 className="text-3xl font-bold mb-12 uppercase tracking-widest text-primary">Testimonials</h3>
-          <p className="text-2xl font-medium leading-relaxed">
-            "Belhomz made finding our home in Guzape an effortless journey. Their attention to detail and transparency is unmatched in Nigeria's real estate market."
-          </p>
-          <div className="mt-8">
-            <p className="font-bold">Engr. Olumide A.</p>
-            <p className="text-sm text-muted-foreground">Real Estate Investor</p>
-          </div>
+      {/* 8. FINAL CTA - The Big Bold Statement */}
+      <section className="py-32 px-6 bg-background relative overflow-hidden">
+        {/* Background Decorative Text */}
+        <div className="absolute -bottom-10 -left-10 text-[20vw] font-bold text-muted/20 select-none pointer-events-none tracking-tighter">
+          BELHOMZ
         </div>
-      </section>
-
-      {/* 9. FINAL CTA SECTION */}
-      <section className="bg-primary text-primary-foreground py-24 text-center">
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className="text-5xl md:text-7xl font-bold mb-8">Invest in Your <br /> Future Today.</h2>
-          <Button size="lg" className="bg-white text-black hover:bg-white/90 rounded-full h-16 px-12 text-xl font-bold">
-            Get Started
+        
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-6xl md:text-8xl font-bold tracking-tighter mb-12">
+            Invest in <br /> <span className="text-muted-foreground font-light">Your Future.</span>
+          </h2>
+          <Button size="lg" className="bg-primary text-primary-foreground rounded-full h-20 px-16 text-2xl font-bold hover:scale-105 transition-transform">
+            Get Started <ArrowRight className="ml-3 h-8 w-8" />
           </Button>
         </div>
       </section>
 
-  
     </div>
   );
 }

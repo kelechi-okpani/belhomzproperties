@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
-const slides = [
+const slidess = [
   {
     id: 1,
     title: "The Maitama Collection",
@@ -37,7 +37,92 @@ const slides = [
     description: "Direct access to premium coastal investments for the discerning Abuja investor.",
     image: "/home/slide4.jpg",
     location: "Victoria Island, Lagos",
-  }
+  },
+
+];
+
+
+const slides = [
+  {
+    id: 1,
+    title: "Maitama Heights",
+    subtitle: "Luxury Living",
+    description: "Experience unparalleled elegance in the heart of Abuja's most prestigious district.",
+    image: "/slide/1.jpg",
+    location: "Maitama, Abuja",
+  },
+  {
+    id: 2,
+    title: "Asokoro Gardens",
+    subtitle: "Private Sanctuary",
+    description: "Exclusive residential units offering maximum privacy and lush greenery.",
+    image: "/slide/2.jpg",
+    location: "Asokoro, Abuja",
+  },
+  {
+    id: 3,
+    title: "The Wuse II Collective",
+    subtitle: "Urban Sophistication",
+    description: "High-yield commercial and residential spaces in the city's vibrant core.",
+    image: "/slide/3.jpg",
+    location: "Wuse II, Abuja",
+  },
+  {
+    id: 4,
+    title: "Guzape View",
+    subtitle: "Hilltop Excellence",
+    description: "Breathtaking views and modern architecture for the discerning homeowner.",
+    image: "/slide/4.jpg",
+    location: "Guzape, Abuja",
+  },
+  {
+    id: 5,
+    title: "Jabi Lake Terraces",
+    subtitle: "Waterfront Serenity",
+    description: "Premium lakeside living with state-of-the-art facilities and scenic trails.",
+    image: "/slide/11.jpg",
+    location: "Jabi, Abuja",
+  },
+  {
+    id: 6,
+    title: "Central Area Plaza",
+    subtitle: "Business Frontier",
+    description: "Strategic investment opportunities in Abuja’s primary business district.",
+    image: "/slide/6.jpg",
+    location: "Central Business District, Abuja",
+  },
+  {
+    id: 7,
+    title: "Gwarinpa Estate",
+    subtitle: "Community Comfort",
+    description: "Expansive family homes within Africa's largest planned housing estate.",
+    image: "/slide/7.jpg",
+    location: "Gwarinpa, Abuja",
+  },
+  {
+    id: 8,
+    title: "Katampe Extension",
+    subtitle: "Future Prime",
+    description: "Early-stage investment in one of Abuja's fastest-developing luxury zones.",
+    image: "/slide/8.jpg",
+    location: "Katampe, Abuja",
+  },
+  {
+    id: 9,
+    title: "Durumi Residences",
+    subtitle: "Accessible Luxury",
+    description: "Modern apartments perfectly situated for easy access to the city center.",
+    image: "/slide/9.jpg",
+    location: "Durumi, Abuja",
+  },
+  {
+    id: 10,
+    title: "Life Camp Villas",
+    subtitle: "Quiet Elegance",
+    description: "A refined neighborhood offering a peaceful retreat from the urban bustle.",
+    image: "/slide/10.jpg",
+    location: "Life Camp, Abuja",
+  },
 ];
 
 export default function LuxuryHero() {
@@ -65,7 +150,7 @@ export default function LuxuryHero() {
   const prevIndex = (current - 1 + slides.length) % slides.length;
 
   return (
-    <section className="relative h-[95vh] w-full overflow-hidden bg-zinc-950">
+    <section className="relative h-[100vh] w-full overflow-hidden bg-zinc-950">
       {/* 1. STABILITY LAYER: Prevents the "black flash" by showing the old image underneath */}
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-1000"
@@ -173,9 +258,7 @@ export default function LuxuryHero() {
              <p className="text-sm font-medium text-white">{slides[current].location}</p>
            </div>
            <div className="h-10 w-[1px] bg-white/20" />
-           <div className="flex h-12 w-12 items-center justify-center bg-primary text-white">
-              <ArrowRight className="w-5 h-5" />
-           </div>
+        
         </motion.div>
       </div>
     </section>

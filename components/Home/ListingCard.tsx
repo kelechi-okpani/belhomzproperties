@@ -102,13 +102,11 @@ export default function FeaturedVideos() {
         <div className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <span className="text-primary font-bold uppercase tracking-[0.3em] text-xs">Featured Tours</span>
-            <h3 className="text-4xl md:text-5xl font-light text-white mt-2 leading-tight">
-              Exclusive <span className="font-serif italic">Video Walkthroughs</span>
+            <h3 className="text-3xl md:text-4xl font-light text-white mt-2 leading-tight">
+              Exclusive <span className="font-serif">Video Walkthroughs</span>
             </h3>
           </div>
-          <Button variant="outline" className="rounded-none border-white/20 text-white hover:bg-white hover:text-black px-10 h-14">
-            View All Listings
-          </Button>
+       
         </div>
 
         {/* The Grid */}

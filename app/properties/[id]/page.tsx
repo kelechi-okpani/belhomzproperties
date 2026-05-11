@@ -1,247 +1,162 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import Navigation from '@/components/navigation';
-import { mockProperties, mockAgents } from '@/lib/mock-data';
+import { motion } from 'framer-motion';
+import { 
+  ChevronLeft, 
+  Share2, 
+  Heart, 
+  MapPin, 
+  BedDouble, 
+  Bath, 
+  Square, 
+  CheckCircle2, 
+  ShieldCheck,
+  Calendar,
+  ArrowRight
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const property = mockProperties.find((p) => p.id === params.id);
-  const agent = mockAgents.find((a) => a.id === property?.agentId);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
-  const [submitted, setSubmitted] = useState(false);
-
-  if (!property) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <div className="max-w-6xl mx-auto px-4 py-12 text-center">
-          <h1 className="text-2xl font-bold text-foreground">Property not found</h1>
-          <Link href="/properties">
-            <Button className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90">
-              Back to Properties
-            </Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setFormData({ name: '', email: '', phone: '', message: '' });
-      setSubmitted(false);
-    }, 3000);
+export default function PropertyDetailsPage() {
+  // In a real app, you'd fetch this via params using your Sanity CMS logic
+  const property = {
+    title: "The Platinum Monolith",
+    location: "Maitama District, Abuja",
+    price: "₦850,000,000",
+    description: "An architectural masterpiece defined by its brutalist concrete exterior and seamless glass-to-wall ratios. Designed for high-performance living, this estate features redundant power systems and high-speed fiber infrastructure as standard.",
+    specs: { beds: 6, baths: 7, sqft: "1,200m²", lot: "2,500m²" },
+    amenities: ["Private Cinema", "Smart Home OS", "Infinity Pool", "Redundant Power", "Fiber Internet", "24/7 Security"],
+    images: ["/slide/14.jpg", "/slide/15.jpg", "/slide/12.jpg"]
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-background pb-20 mt-20">
+      {/* 1. NAVIGATION & ACTIONS */}
+      
 
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <Link href="/properties" className="text-primary hover:underline mb-4 inline-block">
-            ← Back to Properties
-          </Link>
-          <h1 className="text-4xl font-bold text-foreground mb-2">{property.title}</h1>
-          <p className="text-lg text-muted-foreground">{property.location}</p>
+  
+
+
+      {/* 2. HERO VISUAL GALLERY */}
+      <section className="pt-20 px-6 max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 h-[70vh]">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="md:col-span-2 relative rounded-[2.5rem] overflow-hidden border border-border"
+        >
+          <img src={property.images[0]} className="w-full h-full object-cover" alt="Main View" />
+        </motion.div>
+        <div className="hidden md:grid grid-rows-2 gap-4 md:col-span-1">
+          <div className="relative rounded-[2rem] overflow-hidden border border-border">
+            <img src={property.images[1]} className="w-full h-full object-cover" alt="Interior" />
+          </div>
+          <div className="relative rounded-[2rem] overflow-hidden border border-border">
+            <img src={property.images[2]} className="w-full h-full object-cover" alt="Detail" />
+          </div>
         </div>
+        <div className="hidden md:block relative rounded-[2.5rem] overflow-hidden border border-border bg-secondary/30 flex items-center justify-center">
+           <Button variant="link" className="font-bold uppercase tracking-[0.3em] text-[10px]">View All 24 Frames</Button>
+        </div>
+      </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {/* Image Gallery */}
-            <div className="mb-8">
-              <div className="relative h-96 md:h-[500px] rounded-lg overflow-hidden mb-4 bg-muted">
-                <Image
-                  src={property.images[0]}
-                  alt={property.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              {property.images.length > 1 && (
-                <div className="grid grid-cols-4 gap-4">
-                  {property.images.map((img, idx) => (
-                    <div key={idx} className="relative h-24 rounded-lg overflow-hidden bg-muted border border-border hover:border-primary cursor-pointer">
-                      <Image
-                        src={img}
-                        alt={`Gallery ${idx}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
+      {/* 3. CONTENT ARCHITECTURE */}
+      <main className="max-w-[1440px] mx-auto px-6 mt-16 grid grid-cols-1 lg:grid-cols-12 gap-20">
+        
+        {/* Left: Details */}
+        <div className="lg:col-span-8 space-y-12">
+          <header>
+            <div className="flex items-center gap-3 mb-6">
+               <Badge className="bg-primary/10 text-primary border-primary/20 uppercase tracking-widest text-[10px] px-4 py-1">Verified Asset</Badge>
+               <span className="text-[10px] uppercase tracking-widest font-bold opacity-40">Ref: BLH-2026-001</span>
             </div>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-4">{property.title}</h1>
+            <p className="text-xl text-muted-foreground flex items-center gap-2 font-medium">
+              <MapPin size={20} className="text-primary" /> {property.location}
+            </p>
+          </header>
 
-            {/* Property Details */}
-            <div className="bg-card border border-border rounded-lg p-8 mb-8">
-              <h2 className="text-2xl font-bold text-foreground mb-6">Property Details</h2>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 pb-8 border-b border-border">
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Bedrooms</p>
-                  <p className="text-2xl font-bold text-foreground">{property.bedrooms}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Bathrooms</p>
-                  <p className="text-2xl font-bold text-foreground">{property.bathrooms}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Square Feet</p>
-                  <p className="text-2xl font-bold text-foreground">{property.sqft.toLocaleString()}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-2">Price per Sqft</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    ${(property.price / property.sqft).toFixed(0)}
-                  </p>
-                </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10 border-y border-border/50">
+            {[
+              { label: "Sleeping", value: property.specs.beds, icon: BedDouble },
+              { label: "Baths", value: property.specs.baths, icon: Bath },
+              { label: "Interior", value: property.specs.sqft, icon: Square },
+              { label: "Lot Size", value: property.specs.lot, icon: Square },
+            ].map((spec) => (
+              <div key={spec.label}>
+                <spec.icon className="text-primary mb-3" size={24} />
+                <p className="text-[10px] uppercase tracking-widest font-bold opacity-40 mb-1">{spec.label}</p>
+                <p className="text-xl font-bold">{spec.value}</p>
               </div>
-
-              <div>
-                <h3 className="text-lg font-bold text-foreground mb-4">Description</h3>
-                <p className="text-foreground leading-relaxed">{property.description}</p>
-              </div>
-            </div>
+            ))}
           </div>
 
-          {/* Sidebar */}
+          <article className="prose prose-invert max-w-none">
+            <h3 className="text-2xl font-bold tracking-tight mb-4 uppercase text-xs tracking-[0.3em]">Architectural Narrative</h3>
+            <p className="text-lg text-muted-foreground leading-relaxed italic border-l-2 border-primary/30 pl-8">
+              {property.description}
+            </p>
+          </article>
+
           <div>
-            {/* Price Card */}
-            <div className="bg-card border border-border rounded-lg p-8 mb-8 sticky top-24">
-              <p className="text-sm text-muted-foreground mb-2">List Price</p>
-              <p className="text-4xl font-bold text-primary mb-6">
-                ${(property.price / 1000000).toFixed(1)}M
-              </p>
-
-              {/* Agent Card */}
-              {agent && (
-                <div className="mb-6 pb-6 border-b border-border">
-                  <h3 className="text-sm font-bold text-foreground mb-4">Listing Agent</h3>
-                  <div className="flex gap-4 mb-4">
-                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                      <Image
-                        src={agent.image}
-                        alt={agent.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="font-bold text-foreground">{agent.name}</p>
-                      <p className="text-sm text-muted-foreground">{agent.listings} Listings</p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-3">{agent.email}</p>
-                  <p className="text-sm text-muted-foreground">{agent.phone}</p>
+            <h3 className="text-xs uppercase tracking-[0.3em] font-bold mb-8">Integrated Infrastructure</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+              {property.amenities.map((item) => (
+                <div key={item} className="flex items-center gap-3 p-4 rounded-xl bg-secondary/20 border border-border">
+                  <CheckCircle2 size={16} className="text-primary" />
+                  <span className="text-sm font-bold tracking-tight">{item}</span>
                 </div>
-              )}
-
-              {/* Inquiry Form */}
-              <div>
-                <h3 className="text-sm font-bold text-foreground mb-4">Interested?</h3>
-                {submitted ? (
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-                    Thank you! We&apos;ll be in touch soon.
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-3">
-                    <Input
-                      type="text"
-                      name="name"
-                      placeholder="Your Name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="text-sm"
-                    />
-                    <Input
-                      type="email"
-                      name="email"
-                      placeholder="Email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="text-sm"
-                    />
-                    <Input
-                      type="tel"
-                      name="phone"
-                      placeholder="Phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="text-sm"
-                    />
-                    <textarea
-                      name="message"
-                      placeholder="Message (optional)"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm"
-                    />
-                    <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                      Send Inquiry
-                    </Button>
-                  </form>
-                )}
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Similar Properties */}
-        <div className="mt-16 pt-12 border-t border-border">
-          <h2 className="text-3xl font-bold text-foreground mb-8">Similar Properties</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {mockProperties
-              .filter((p) => p.id !== property.id)
-              .slice(0, 3)
-              .map((sim) => (
-                <Link key={sim.id} href={`/properties/${sim.id}`}>
-                  <div className="group bg-card rounded-lg overflow-hidden border border-border hover:border-primary shadow-sm hover:shadow-md transition cursor-pointer">
-                    <div className="relative h-48 overflow-hidden bg-muted">
-                      <Image
-                        src={sim.images[0]}
-                        alt={sim.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition duration-300"
-                      />
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-bold text-foreground mb-1 group-hover:text-primary transition">
-                        {sim.title}
-                      </h3>
-                      <p className="text-sm text-primary font-bold mb-2">
-                        ${(sim.price / 1000000).toFixed(1)}M
-                      </p>
-                      <p className="text-xs text-muted-foreground">{sim.location}</p>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+        {/* Right: Procurement Desk */}
+        <aside className="lg:col-span-4">
+          <div className="sticky top-32 space-y-6">
+            <div className="p-8 rounded-[2.5rem] bg-secondary/30 border border-border shadow-xl">
+              <p className="text-[10px] uppercase tracking-widest font-bold opacity-40 mb-2">Acquisition Value</p>
+              <h2 className="text-4xl font-bold tracking-tighter mb-8">{property.price}</h2>
+              
+              <div className="space-y-4 mb-8">
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-background/50 border border-border">
+                   <ShieldCheck className="text-primary" size={20} />
+                   <div>
+                     <p className="text-[10px] uppercase font-bold tracking-widest">Ownership</p>
+                     <p className="text-xs font-medium">C of O Verified / Legal Clean</p>
+                   </div>
+                </div>
+                <div className="flex items-center gap-4 p-4 rounded-2xl bg-background/50 border border-border">
+                   <Calendar className="text-primary" size={20} />
+                   <div>
+                     <p className="text-[10px] uppercase font-bold tracking-widest">Inspection</p>
+                     <p className="text-xs font-medium">Available for Private View</p>
+                   </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Button className="w-full h-16 rounded-2xl bg-primary text-primary-foreground font-bold text-sm tracking-widest group">
+                  INITIATE HANDSHAKE <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button variant="outline" className="w-full h-16 rounded-2xl border-border font-bold text-xs tracking-widest">
+                  DOWNLOAD BROCHURE (PDF)
+                </Button>
+              </div>
+            </div>
+
+            <div className="p-6 rounded-[2rem] bg-primary/5 border border-primary/20 flex items-center gap-4">
+               <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <ShieldCheck className="text-primary" />
+               </div>
+               <p className="text-xs font-medium text-muted-foreground leading-snug">
+                 This asset is managed by the <strong>Abuja Desk</strong> with 100% availability guaranteed.
+               </p>
+            </div>
           </div>
-        </div>
-      </div>
+        </aside>
+
+      </main>
     </div>
   );
 }

@@ -62,7 +62,8 @@ export default function ProfessionalReels() {
                     {/* Native Instagram Embed */}
                     <iframe
                     
-                      src={`https://www.instagram.com/reel/${reel.embedId}/embed/captioned/`}
+                      src={`https://www.instagram.com/belhomzproperties/reel/${reel.embedId}/embed/captioned`}
+                      // src={`https://www.instagram.com/belhomzproperties/reel/${reel.embedId}/embed/captioned/`}
                       className="absolute inset-0 w-full h-full object-cover "
                       frameBorder="0"
                       scrolling="no"
@@ -75,7 +76,6 @@ export default function ProfessionalReels() {
               </CarouselItem>
             ))}
           </CarouselContent>
-
           {/* Luxury Controls */}
           <div className="flex justify-center md:justify-end gap-4 mt-12">
             <CarouselPrevious className="static translate-y-0 h-14 w-14 border-primary text-primary hover:bg-primary hover:text-white transition-all shadow-lg" />

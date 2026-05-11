@@ -57,7 +57,7 @@ export default function HeroVideoSection() {
           <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
 
           {/* Main Video Container */}
-          <div className="relative h-full w-full rounded-[2.5rem] overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.3)] border border-white/10">
+          <div className="relative h-full w-full rounded-[2rem] overflow-hidden shadow-[0_32px_64px_-12px_rgba(0,0,0,0.3)] border border-white/10">
             <video
               autoPlay
               loop
