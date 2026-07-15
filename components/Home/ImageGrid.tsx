@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useQuery } from "@apollo/client/react";
 import { GET_INSTAGRAM_FEED } from "@/dashboard/lib/graphql/documents";
 
+
 export default function ContinuousCarousel() {
     const [page] = useState<number>(1);
 
