@@ -1,6 +1,7 @@
 # 1. Where to save the schema on your frontend hard drive
 schema: "./src/graphql/schema.graphql"
 
+
 extensions:
   endpoints:
     default:
