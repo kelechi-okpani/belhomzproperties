@@ -15,7 +15,7 @@ import { useAuthStore } from "../store/auth-store";
 import { getWsClient } from "./ws-client";
 
 const GRAPHQL_HTTP_URL =
-  process.env.NEXT_PUBLIC_GRAPHQL_HTTP_URL ?? "http://localhost:9000/graphql";
+  process.env.NEXT_PUBLIC_GRAPHQL_URL ?? "http://localhost:9000/graphql";
 
 const httpLink = new HttpLink({ uri: GRAPHQL_HTTP_URL });
 
