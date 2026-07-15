@@ -71,7 +71,7 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
-                hostname: 'dominion-city-api.onrender.com', // Removed duplicate https:// protocol prefix from hostname
+                hostname: 'https://belhomz-api.onrender.com/', // Removed duplicate https:// protocol prefix from hostname
                 port: '',
                 pathname: '/api/proxy-image/**',
             },
