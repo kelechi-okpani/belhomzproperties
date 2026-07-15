@@ -48,44 +48,36 @@ export function PropertyCard({ property, isAdmin = false }: PropertyCardProps) {
   const handleNextImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (currentImgIndex < images.length - 1) {
-      setCurrentImgIndex((prev) => prev + 1);
-    } else {
-      setCurrentImgIndex(0);
-    }
+    setCurrentImgIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
   };
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (currentImgIndex > 0) {
-      setCurrentImgIndex((prev) => prev - 1);
-    } else {
-      setCurrentImgIndex(images.length - 1);
-    }
+    setCurrentImgIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
   };
 
   return (
-      <Link href={detailHref}>
-        <Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer bg-[#0D0F12] border border-zinc-800 rounded-2xl flex flex-col p-0">
+      <Link href={detailHref} className="block group">
+        <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg bg-card border-border rounded-2xl flex flex-col h-full p-0">
 
-          {/* Top Image Section (Reduced height to aspect-[4/3] to fit portrait mobile captures perfectly) */}
-          <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-950 shrink-0">
+          {/* Image Container */}
+          <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted shrink-0">
             {images.length > 0 ? (
                 <img
                     src={images[currentImgIndex].url}
                     alt={`${property.title} - View ${currentImgIndex + 1}`}
-                    className="h-full w-full object-cover transition-all duration-500 group-hover:scale-[1.02]"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
             ) : (
-                <div className="flex h-full items-center justify-center text-zinc-500">
-                  No image
+                <div className="flex h-full items-center justify-center text-muted-foreground text-xs font-medium">
+                  No image available
                 </div>
             )}
 
-            {/* Reels-style Segmented Progress Bar (Tightly pinned to top boundary) */}
+            {/* Segmented Image Progress Indicator */}
             {hasMultipleImages && (
-                <div className="absolute top-1.5 left-3 right-3 z-20 flex gap-1">
+                <div className="absolute top-2 left-3 right-3 z-20 flex gap-1">
                   {images.map((_, idx) => (
                       <div
                           key={idx}
@@ -97,25 +89,25 @@ export function PropertyCard({ property, isAdmin = false }: PropertyCardProps) {
                 </div>
             )}
 
-            {/* Badge Overlays (Sits snuggly directly below the progress bar line) */}
+            {/* Status Badge & Counters Overlay */}
             <div className="absolute top-4 left-3 right-3 z-10 flex justify-between items-center pointer-events-none">
-              <Badge variant={STATUS_TONE[property.status]} className="shadow-md backdrop-blur-sm pointer-events-auto text-[10px] py-0 px-2 h-5">
+              <Badge variant={STATUS_TONE[property.status]} className="shadow-sm backdrop-blur-md text-[10px] uppercase font-bold py-0.5 px-2">
                 {property.status}
               </Badge>
               {hasMultipleImages && (
-                  <span className="text-[9px] bg-black/60 text-white font-semibold px-1.5 py-0.5 rounded-full backdrop-blur-sm">
-            {currentImgIndex + 1}/{images.length}
-          </span>
+                  <span className="text-[10px] bg-black/60 text-white font-semibold px-2 py-0.5 rounded-full backdrop-blur-md">
+                {currentImgIndex + 1}/{images.length}
+              </span>
               )}
             </div>
 
-            {/* Image Navigation Stepper Controls */}
+            {/* Carousel Next/Prev Controls */}
             {hasMultipleImages && (
-                <div className="absolute inset-y-0 left-0 right-0 z-10 flex items-center justify-between px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <div className="absolute inset-y-0 left-0 right-0 z-10 flex items-center justify-between px-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <button
                       type="button"
                       onClick={handlePrevImage}
-                      className="p-1 rounded-full bg-black/50 text-white hover:bg-black/80 backdrop-blur-sm transition pointer-events-auto"
+                      className="p-1.5 rounded-full bg-black/50 text-white hover:bg-black/80 backdrop-blur-sm transition pointer-events-auto"
                       aria-label="Previous image"
                   >
                     <ChevronLeft className="h-3.5 w-3.5" />
@@ -123,7 +115,7 @@ export function PropertyCard({ property, isAdmin = false }: PropertyCardProps) {
                   <button
                       type="button"
                       onClick={handleNextImage}
-                      className="p-1 rounded-full bg-black/50 text-white hover:bg-black/80 backdrop-blur-sm transition pointer-events-auto"
+                      className="p-1.5 rounded-full bg-black/50 text-white hover:bg-black/80 backdrop-blur-sm transition pointer-events-auto"
                       aria-label="Next image"
                   >
                     <ChevronRight className="h-3.5 w-3.5" />
@@ -132,37 +124,36 @@ export function PropertyCard({ property, isAdmin = false }: PropertyCardProps) {
             )}
           </div>
 
-          {/* Text Area Below Image (Dark, cleanly structured content) */}
+          {/* Card Content Block */}
           <div className="p-4 flex flex-col justify-between flex-grow">
-            <div>
-              <p className="font-display text-lg font-bold tracking-tight text-zinc-600">
+            <div className="space-y-1.5">
+              <p className="font-display text-lg font-bold tracking-tight text-foreground">
                 {formatCurrency(property.price)}
               </p>
 
-              {/* Title / Description */}
-              <h3 className="mt-1 text-sm font-medium text-zinc-600 line-clamp-2 leading-relaxed">
+              <h3 className="text-sm font-medium text-foreground/90 line-clamp-2 leading-snug">
                 {property.title}
               </h3>
 
-              {/* Attributes */}
-              <div className="mt-3.5 flex items-center gap-3 text-xs text-zinc-400">
-          <span className="flex items-center gap-1 truncate max-w-[70%]">
-            <MapPin className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
-            <span className="truncate">{property.location}</span>
-          </span>
-                <span className="flex items-center gap-1 shrink-0 ml-auto">
-            <Ruler className="h-3.5 w-3.5 text-zinc-500" />
+              <div className="pt-2 flex items-center justify-between text-xs text-muted-foreground gap-2">
+              <span className="flex items-center gap-1 min-w-0">
+                <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                <span className="truncate">{property.location}</span>
+              </span>
+                <span className="flex items-center gap-1 shrink-0 font-medium text-foreground/80">
+                <Ruler className="h-3.5 w-3.5 text-primary shrink-0" />
                   {property.size}m²
-          </span>
+              </span>
               </div>
             </div>
 
-            {/* Bottom Link Action (Matches the "View on IG" visual accent) */}
-            <div className="mt-4 pt-3 border-t border-zinc-800/80 flex items-center justify-between text-xs font-semibold text-[var(--color-brass,theme(colors.amber.500))] group-hover:text-[var(--color-brass-hover,theme(colors.amber.400))] transition-colors duration-200">
+            {/* Action Link Row */}
+            <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-primary group-hover:text-primary/80 transition-colors">
               <span>{isAdmin ? "Manage Property" : "View Details"}</span>
               <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </div>
           </div>
+
         </Card>
       </Link>
   );
