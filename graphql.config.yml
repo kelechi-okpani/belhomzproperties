@@ -4,4 +4,5 @@ schema: "./src/graphql/schema.graphql"
 extensions:
   endpoints:
     default:
-      url: "http://localhost:9000/graphql" # 2. Points to your running BACKEND server port
+      url: "https://belhomz-api.onrender.com/graphql" # 2. Points to your running BACKEND server port
+#      url: "http://localhost:9000/graphql" # 2. Points to your running BACKEND server port
