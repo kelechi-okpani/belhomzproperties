@@ -76,7 +76,7 @@ export default function RegisterPage() {
         <CardContent className="p-8">
           <div className="space-y-2 text-center mb-8">
             <h1 className="font-display text-3xl font-semibold tracking-tight text-white">
-              Create your account
+              Create account
             </h1>
             <p className="text-sm text-white">
               Get started with your Belhomz workforce profile.
