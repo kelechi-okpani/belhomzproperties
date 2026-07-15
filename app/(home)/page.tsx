@@ -8,6 +8,7 @@ import ListingCard from '@/components/Home/ListingCard';
 import NeighborhoodBento from '@/components/Home/Neighborhood';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Phone, MapPin, ArrowUpRight } from 'lucide-react';
+import ShowcaseGrid from "@/components/Home/ImageGrid";
 
 
 export default function Home() {
@@ -57,7 +58,8 @@ export default function Home() {
 
   {/*<div className=" bottom-0 w-full bg-background/80 backdrop-blur-md border-t border-border py-4 overflow-hidden">*/}
   <div className=" bottom-0 w-full  border-t border-border py-4 overflow-hidden">
-          <ContinuousCarousel />
+          <ShowcaseGrid />
+          {/*<ContinuousCarousel />*/}
         </div>
 
       {/* 4. EXCLUSIVE NEIGHBORHOODS - Bento Grid Style */}
