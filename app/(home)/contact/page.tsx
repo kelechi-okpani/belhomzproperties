@@ -428,12 +428,12 @@ export default function ContactPage() {
                 >
                   {loading ? (
                       <>
-                        TRANSMITTING DATA...
+                        SENDING INQUIRY...
                         <Loader2 size={18} className="ml-3 animate-spin" />
                       </>
                   ) : (
                       <>
-                        TRANSMIT INQUIRY
+                        SEND INQUIRY
                         <Send size={18} className="ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                       </>
                   )}
