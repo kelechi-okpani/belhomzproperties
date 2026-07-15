@@ -1,0 +1,452 @@
+# This file was generated. Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+"Indicates exactly one field must be supplied and this field must not be `null`."
+directive @oneOf on INPUT_OBJECT
+
+type Activity {
+    actor: ID
+    createdAt: String!
+    entityId: ID!
+    entityType: String!
+    id: ID!
+    message: String!
+    type: ActivityType!
+}
+
+type ActivityTypeBreakdown {
+    count: Int!
+    type: ActivityType!
+}
+
+type AgentPerformance {
+    agentId: ID!
+    agentName: String
+    byStage: [StageBreakdown!]!
+    closedLost: Int!
+    closedWon: Int!
+    conversionRate: Int!
+    totalLeads: Int!
+}
+
+type AgentRanking {
+    agentId: ID!
+    count: Int!
+}
+
+"""
+
+Everything the dashboard needs, in one shape. Sections that don't
+apply to the requesting user's role come back as null (e.g. an AGENT
+gets 'myPerformance' populated but 'agentLeaderboard' null; the
+reverse is true for OWNER) — the same permission rules already
+enforced elsewhere, just returned from a single query instead of
+requiring one request per widget.
+"""
+type AnalyticsPayload {
+    agentLeaderboard: [AgentPerformance!]
+    monthlyRevenue: Float
+    myActivityStats: MyActivityStats!
+    "AGENT only"
+    myPerformance: AgentPerformance
+    overduePayments: [Payment!]
+    pendingPayments: [Payment!]
+    propertyAvailability: AvailabilitySnapshot!
+    recentActivity: [Activity!]!
+    "OWNER and FINANCE"
+    revenueTrend: [RevenueMonth!]
+    "OWNER only"
+    salesFunnel: [FunnelStage!]
+    "Visible to everyone"
+    todaysLeadCount: Int!
+    topAgents: [AgentRanking!]
+}
+
+type AuthPayload {
+    tokens: AuthTokens!
+    user: PublicUser!
+}
+
+type AuthTokens {
+    accessToken: String!
+    refreshToken: String!
+}
+
+type AvailabilitySnapshot {
+    available: Int!
+    reserved: Int!
+    sold: Int!
+}
+
+type Enquiry {
+    _id: ID!
+    createdAt: String!
+    email: String!
+    fullName: String!
+    message: String!
+    phone: String
+    status: EnquiryStatus!
+    subject: String!
+    updatedAt: String!
+}
+
+type EnquiryFeedResponse {
+    enquiries: [Enquiry!]!
+    pagination: EnquiryPaginationMeta!
+}
+
+type EnquiryPaginationMeta {
+    page: Int!
+    pages: Int!
+    total: Int!
+}
+
+type FunnelStage {
+    count: Int!
+    stage: LeadStage!
+}
+
+type Inspection {
+    completed: Boolean!
+    location: String!
+    notes: String
+    scheduledAt: String!
+}
+
+type InstagramFeedResponse {
+    pagination: PaginationMeta!
+    posts: [InstagramPost!]!
+}
+
+type InstagramPost {
+    _id: ID!
+    caption: String
+    instagramId: String!
+    lastSyncedAt: String!
+    mediaType: String!
+    mediaUrl: String!
+    permalink: String!
+    thumbnailUrl: String!
+    timestamp: String!
+}
+
+type Installment {
+    amount: Float!
+    dueDate: String!
+    id: ID!
+    paidAt: String
+    status: PaymentStatus!
+}
+
+type Lead {
+    activities: [LeadActivity!]!
+    assignedAgent: ID!
+    clientEmail: String
+    clientName: String!
+    clientPhone: String!
+    createdAt: String!
+    id: ID!
+    inspection: Inspection
+    property: ID
+    stage: LeadStage!
+    updatedAt: String!
+}
+
+type LeadActivity {
+    createdAt: String!
+    createdBy: ID!
+    note: String!
+}
+
+type Mutation {
+    addLeadActivity(id: ID!, note: String!): Lead!
+    changeUserRole(id: ID!, role: UserRole!): PublicUser!
+    createEnquiry(input: CreateEnquiryInput!): Enquiry!
+    createLead(input: CreateLeadInput!): Lead!
+    createPayment(input: CreatePaymentInput!): Payment!
+    createProperty(input: CreatePropertyInput!): Property!
+    deactivateUser(id: ID!): PublicUser!
+    deleteProperty(id: ID!): Boolean!
+    forgotPassword(email: String!): Boolean!
+    login(input: LoginInput!): AuthPayload!
+    logout: Boolean!
+    reactivateUser(id: ID!): PublicUser!
+    reassignLead(agentId: ID!, id: ID!): Lead!
+    recordInstallmentPayment(amount: Float!, installmentId: ID!, paymentId: ID!): Payment!
+    refreshToken(refreshToken: String!): AuthTokens!
+    register(input: RegisterInput!): AuthPayload!
+    resetPassword(newPassword: String!, token: String!): Boolean!
+    scheduleInspection(id: ID!, input: ScheduleInspectionInput!): Lead!
+    updateEnquiryStatus(id: ID!, status: EnquiryStatus!): Enquiry!
+    updateLeadStage(id: ID!, stage: LeadStage!): Lead!
+    updateProfile(input: UpdateProfileInput!): PublicUser!
+    updateProperty(id: ID!, input: UpdatePropertyInput!): Property!
+    updatePropertyStatus(id: ID!, status: PropertyStatus!): Property!
+}
+
+type MyActivityStats {
+    byType: [ActivityTypeBreakdown!]!
+    total: Int!
+}
+
+type PaginationMeta {
+    page: Int!
+    pages: Int!
+    total: Int!
+}
+
+type Payment {
+    amountPaid: Float!
+    clientName: String!
+    clientPhone: String!
+    createdAt: String!
+    id: ID!
+    installments: [Installment!]!
+    lead: ID
+    method: PaymentMethod!
+    property: ID!
+    recordedBy: ID!
+    totalAmount: Float!
+    updatedAt: String!
+}
+
+type Property {
+    amenities: [String!]!
+    createdAt: String!
+    createdBy: ID!
+    description: String!
+    id: ID!
+    images: [PropertyImage!]!
+    location: String!
+    price: Float!
+    size: Float!
+    status: PropertyStatus!
+    title: String!
+    type: PropertyType!
+    updatedAt: String!
+}
+
+type PropertyImage {
+    publicId: String!
+    url: String!
+}
+
+type PropertyList {
+    items: [Property!]!
+    total: Int!
+}
+
+type PublicUser {
+    email: String!
+    id: ID!
+    isActive: Boolean!
+    name: String!
+    phone: String
+    role: UserRole!
+}
+
+type Query {
+    activities(limit: Int): [Activity!]!
+    allAgentPerformance: [AgentPerformance!]!
+    analytics: AnalyticsPayload!
+    getEnquiries(limit: Int, page: Int, status: EnquiryStatus): EnquiryFeedResponse!
+    getEnquiryById(id: ID!): Enquiry
+    getInstagramFeed(limit: Int, page: Int): InstagramFeedResponse!
+    getInstagramPost(id: ID!): InstagramPost
+    lead(id: ID!): Lead!
+    leads(filter: LeadFilterInput): [Lead!]!
+    me: PublicUser!
+    monthlyRevenue: Float!
+    myActivityStats(days: Int): MyActivityStats!
+    myPerformance: AgentPerformance!
+    overduePayments: [Payment!]!
+    payment(id: ID!): Payment!
+    payments: [Payment!]!
+    pendingPayments: [Payment!]!
+    profile: PublicUser!
+    properties(filter: PropertyFilterInput): PropertyList!
+    property(id: ID!): Property!
+    propertyAvailability: AvailabilitySnapshot!
+    revenueTrend(months: Int): [RevenueMonth!]!
+    salesFunnel: [FunnelStage!]!
+    staff: [PublicUser!]!
+    todaysLeadCount: Int!
+    topAgents: [AgentRanking!]!
+    user(id: ID!): PublicUser!
+}
+
+type RevenueMonth {
+    month: String!
+    total: Float!
+}
+
+type StageBreakdown {
+    count: Int!
+    stage: String!
+}
+
+type Subscription {
+    activityFeed: Activity!
+}
+
+enum ActivityType {
+    INSPECTION_SCHEDULED
+    INSTALLMENT_PAID
+    LEAD_CREATED
+    LEAD_NOTE_ADDED
+    LEAD_REASSIGNED
+    LEAD_STAGE_CHANGED
+    PAYMENT_CREATED
+    PROPERTY_CREATED
+    PROPERTY_DELETED
+    PROPERTY_STATUS_CHANGED
+    PROPERTY_UPDATED
+    STAFF_ACCOUNT_CREATED
+    STAFF_DEACTIVATED
+    STAFF_REACTIVATED
+    STAFF_ROLE_CHANGED
+}
+
+enum EnquiryStatus {
+    ARCHIVED
+    IN_PROGRESS
+    PENDING
+    RESOLVED
+}
+
+enum LeadStage {
+    CLOSED_LOST
+    CLOSED_WON
+    CONTACTED
+    INSPECTION_BOOKED
+    NEGOTIATION
+    NEW
+}
+
+enum PaymentMethod {
+    BANK_TRANSFER
+    CARD
+    CASH
+    OTHER
+}
+
+enum PaymentStatus {
+    OVERDUE
+    PAID
+    PENDING
+}
+
+enum PropertyStatus {
+    AVAILABLE
+    RESERVED
+    SOLD
+}
+
+enum PropertyType {
+    APARTMENT
+    COMMERCIAL
+    DUPLEX
+    HOUSE
+    LAND
+}
+
+enum UserRole {
+    AGENT
+    OWNER
+    STAFF
+}
+
+input CreateEnquiryInput {
+    email: String!
+    fullName: String!
+    message: String!
+    phone: String
+    subject: String!
+}
+
+input CreateLeadInput {
+    assignedAgent: ID!
+    clientEmail: String
+    clientName: String!
+    clientPhone: String!
+    property: ID
+}
+
+input CreatePaymentInput {
+    clientName: String!
+    clientPhone: String!
+    installments: [InstallmentInput!]!
+    lead: ID
+    method: PaymentMethod!
+    property: ID!
+    totalAmount: Float!
+}
+
+input CreatePropertyInput {
+    amenities: [String!]
+    description: String!
+    location: String!
+    price: Float!
+    size: Float!
+    title: String!
+    type: PropertyType!
+}
+
+input InstallmentInput {
+    amount: Float!
+    dueDate: String!
+}
+
+input LeadFilterInput {
+    assignedAgent: ID
+    stage: LeadStage
+}
+
+input LoginInput {
+    email: String!
+    password: String!
+}
+
+input PropertyFilterInput {
+    limit: Int
+    location: String
+    maxPrice: Float
+    minPrice: Float
+    page: Int
+    search: String
+    status: PropertyStatus
+}
+
+input RegisterInput {
+    email: String!
+    name: String!
+    password: String!
+    phone: String!
+    role: UserRole!
+}
+
+input ScheduleInspectionInput {
+    location: String!
+    notes: String
+    scheduledAt: String!
+}
+
+input UpdateProfileInput {
+    name: String
+    phone: String
+}
+
+input UpdatePropertyInput {
+    amenities: [String!]
+    description: String
+    location: String
+    price: Float
+    size: Float
+    title: String
+    type: PropertyType
+}

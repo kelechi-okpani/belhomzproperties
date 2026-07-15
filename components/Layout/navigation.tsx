@@ -21,6 +21,7 @@ export default function Navbar() {
     { name: "Services", href: "/services" },
     { name: "Properties", href: "/properties" },
     { name: "Contact Us", href: "/contact" },
+    { name: "Socials", href: "/socials" },
   ];
 
   return (
@@ -46,7 +47,7 @@ export default function Navbar() {
               <Link 
                 key={link.name} 
                 href={link.href} 
-                className="text-[10px] uppercase tracking-[0.3em] font-bold text-muted-foreground hover:text-primary transition-colors"
+                className="text-[10px] uppercase tracking-[0.3em] font-bold text-black hover:text-primary transition-colors"
               >
                 {link.name}
               </Link>
@@ -54,13 +55,13 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
-            <Link href="/properties" className="hidden lg:inline-block cursor-pointer">
+            <Link href="/login" className="hidden lg:inline-block cursor-pointer">
 
             <Button 
               size="sm" 
               className="hidden sm:flex rounded-full h-10 cursor-pointer px-8  bg-foreground text-background hover:bg-primary hover:text-white transition-all font-bold uppercase tracking-tighter text-[10px]"
             >
-              View Property <ArrowUpRight size={12} className="ml-1" />
+               Sign in / Register <ArrowUpRight size={12} className="ml-1" />
             </Button>
 </Link>
             {/* TOGGLE BUTTON: Stays visible above the drawer */}
@@ -117,9 +118,9 @@ export default function Navbar() {
                 </div>
 
                 <div className="mt-auto pt-12 border-t border-white/5">
-                <Link href="/properties" className="cursor-pointer">
+                <Link href="/login" className="cursor-pointer">
                 <Button size="lg" className="cursor-pointer w-full h-14 rounded-xl text-sm font-bold uppercase tracking-widest mb-6">
-                    View Properties
+                    Sign in / Register
                   </Button>
                 </Link>
                   

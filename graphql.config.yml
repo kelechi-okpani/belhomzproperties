@@ -1,0 +1,7 @@
+# 1. Where to save the schema on your frontend hard drive
+schema: "./src/graphql/schema.graphql"
+
+extensions:
+  endpoints:
+    default:
+      url: "http://localhost:9000/graphql" # 2. Points to your running BACKEND server port
