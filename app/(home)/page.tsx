@@ -11,7 +11,16 @@ import { ArrowRight, Phone, MapPin, ArrowUpRight } from 'lucide-react';
 
 
 export default function Home() {
-  return (
+
+
+    const WHATSAPP_NUMBER = "2348067320191"; // 🚀 Replace with your actual number (Include country code, NO spaces, NO '+')
+    const PRE_FILLED_MESSAGE = encodeURIComponent(
+        "Hello Belhomz Desk, I am reaching out from the Priority channel regarding an active property acquisition and valuation request."
+    );
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${PRE_FILLED_MESSAGE}`;
+
+
+    return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground">
       
       {/* 1. HERO SECTION */}
@@ -78,8 +87,9 @@ export default function Home() {
         <div className="bg-primary text-primary-foreground rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-stretch">
           <div className="flex-1 min-h-[400px]">
             <img 
-               src="home/boss1.png" 
-               className="w-full h-full object-cover mix-blend-luminosity hover:mix-blend-normal transition-all duration-700" 
+               src="home/boss1.png"
+               // mix-blend-luminosity
+               className="w-full h-full object-cover  hover:mix-blend-normal transition-all duration-700"
                alt="Consultant" 
             />
           </div>
@@ -89,12 +99,23 @@ export default function Home() {
               "We don't just sell property; we curate futures by bridging the gap between architectural vision and your reality."
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
-              <Button size="lg" className="rounded-full bg-background text-foreground hover:bg-background/90 px-8">
-                <Phone className="mr-2 h-5 w-5" /> Call Expert
+                <a href="tel:+2348096603884">
+                    <Button size="lg" className="rounded-full bg-background text-foreground hover:bg-background/90 px-8">
+                        <Phone className="mr-2 h-5 w-5" /> Call Expert
+                    </Button>
+                </a>
+              <Button size="lg"  className="rounded-full bg-background text-foreground hover:bg-background/90 px-8">
+
+                  <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                  >
+                      CONNECT VIA WhatsApp
+                  </a>
+
               </Button>
-              <Button size="lg" variant="outline" className="rounded-full border-primary-foreground/20 hover:bg-primary-foreground/10 px-8">
-                WhatsApp
-              </Button>
+
             </div>
           </div>
         </div>
