@@ -67,7 +67,10 @@ export default function ShowcaseGrid() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Responsive Grid layout */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                        {posts.map((post: any, idx: number) => {
+                        {posts
+                            .filter((_: any, idx: number) => idx !== 3)
+                            .slice(0, 6)
+                            .map((post: any, idx: number) => {
                             const uniqueKey = post._id || post.id || idx;
                             const isVideo = post.mediaType?.toUpperCase() === "VIDEO";
                             const hasFailed = failedMedia[uniqueKey];
