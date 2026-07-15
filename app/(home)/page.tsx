@@ -55,7 +55,8 @@ export default function Home() {
       </section>
 
 
-  <div className=" bottom-0 w-full bg-background/80 backdrop-blur-md border-t border-border py-4 overflow-hidden">
+  {/*<div className=" bottom-0 w-full bg-background/80 backdrop-blur-md border-t border-border py-4 overflow-hidden">*/}
+  <div className=" bottom-0 w-full  border-t border-border py-4 overflow-hidden">
           <ContinuousCarousel />
         </div>
 
