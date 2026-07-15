@@ -1,6 +1,6 @@
 "use client";
-
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { ArrowRight, PlayCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -34,14 +34,12 @@ export default function HeroVideoSection() {
           </p>
           
           <div className="flex flex-wrap gap-6 items-center">
-            <Button size="lg" className="rounded-full px-8 h-14 text-base font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
-              View Catalog <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-            
-            <button className="flex items-center gap-3 group text-sm font-bold uppercase tracking-wider">
-              <PlayCircle className="w-10 h-10 text-primary group-hover:scale-110 transition-transform" />
-              <span>Watch Lifestyle Film</span>
-            </button>
+            <Link href="/properties">
+              <Button size="lg" className="rounded-full px-8 h-14 text-base font-bold shadow-xl shadow-primary/20 hover:scale-105 transition-transform">
+                View Catalog <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+
           </div>
         </motion.div>
 
