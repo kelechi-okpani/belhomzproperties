@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@apollo/client/react";
 import { gql, CombinedGraphQLErrors } from "@apollo/client";
-import { useState, useEffect } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { useState, useEffect, Suspense } from "react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Label } from "@/dashboard/components/ui/input";
@@ -35,7 +35,7 @@ const LOGIN_MUTATION = gql`
   }
 `;
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const setSession = useAuthStore((s) => s.setSession);
@@ -132,7 +132,6 @@ export default function LoginPage() {
                 </Link>
               </div>
               <div className="relative flex items-center w-full">
-                {/* Input with extra right padding (pr-14) so text doesn't touch the right-aligned button */}
                 <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -142,7 +141,6 @@ export default function LoginPage() {
                     {...register("password")}
                 />
 
-                {/* Pinned to the far right end (right-2) */}
                 <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
@@ -187,5 +185,20 @@ export default function LoginPage() {
           </div>
         </CardContent>
       </Card>
+  );
+}
+
+export default function LoginPage() {
+  return (
+      <Suspense
+          fallback={
+            <Card className="border-0 shadow-xl bg-white/15 backdrop-blur-md max-w-md w-full mx-auto p-12 text-center text-white">
+              <Loader2 className="h-6 w-6 animate-spin mx-auto text-white mb-2" />
+              <p className="text-xs text-white/80">Loading login form...</p>
+            </Card>
+          }
+      >
+        <LoginForm />
+      </Suspense>
   );
 }
