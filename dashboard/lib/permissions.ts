@@ -7,31 +7,31 @@ import { UserRole } from "../store/auth-store";
  * role isn't allowed to take.
  */
 export const permissions = {
-  viewProperties: ["OWNER", "AGENT", "STAFF", "FINANCE"],
-  manageProperties: ["OWNER", "AGENT"], // create/edit
+  viewProperties: ["OWNER", "AGENT", "STAFF",],
+  manageProperties: ["OWNER", "STAFF"], // create/edit
   deleteProperties: ["OWNER"],
 
-  viewLeads: ["OWNER", "AGENT", "STAFF", "FINANCE"],
-  createLeads: ["OWNER", "AGENT"],
-  changeLeadStage: ["OWNER", "AGENT"],
+  viewLeads: ["OWNER", "AGENT", "STAFF"],
+  createLeads: ["OWNER", "AGENT", "STAFF"],
+  changeLeadStage: ["OWNER", "AGENT", "STAFF"],
   reassignLeads: ["OWNER"],
   addLeadNotes: ["OWNER", "AGENT", "STAFF"],
-  scheduleInspections: ["OWNER", "AGENT"],
+  scheduleInspections: ["OWNER", "AGENT", "STAFF"],
 
-  viewPayments: ["OWNER", "FINANCE"],
-  managePayments: ["OWNER", "FINANCE"],
+  viewPayments: ["OWNER",],
+  managePayments: ["OWNER"],
 
   viewStaff: ["OWNER"],
   manageStaff: ["OWNER"],
 
-  viewActivities: ["OWNER", "AGENT", "STAFF", "FINANCE"],
+  viewActivities: ["OWNER", "AGENT", "STAFF",],
   viewSalesFunnel: ["OWNER"],
   viewTopAgents: ["OWNER"],
 
   viewMyPerformance: ["AGENT"],
   viewAgentLeaderboard: ["OWNER"],
-  viewMyActivityStats: ["OWNER", "AGENT", "STAFF", "FINANCE"],
-  viewRevenueTrend: ["OWNER", "FINANCE"],
+  viewMyActivityStats: ["OWNER", "AGENT", "STAFF"],
+  viewRevenueTrend: ["OWNER"],
 } as const satisfies Record<string, readonly UserRole[]>;
 
 export type Permission = keyof typeof permissions;

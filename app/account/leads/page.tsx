@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useQuery, useMutation } from "@apollo/client/react";
-import { Plus, Edit } from "lucide-react";
+import { Plus, Edit, Calendar, Phone, Home, GripVertical } from "lucide-react";
 import { LEADS_QUERY, UPDATE_LEAD_STAGE } from "@/dashboard/lib/graphql/documents";
 import { Button } from "@/components/ui/button";
 import { Can } from "@/dashboard/components/auth/can";
@@ -29,12 +29,12 @@ import {
 import { CustomPagination } from "@/dashboard/components/ui/pagination";
 
 const STAGES = [
-  { key: "NEW", label: "New" },
-  { key: "CONTACTED", label: "Contacted" },
-  { key: "INSPECTION_BOOKED", label: "Inspection Booked" },
-  { key: "NEGOTIATION", label: "Negotiation" },
-  { key: "CLOSED_WON", label: "Closed Won" },
-  { key: "CLOSED_LOST", label: "Closed Lost" },
+  { key: "NEW", label: "New", color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" },
+  { key: "CONTACTED", label: "Contacted", color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" },
+  { key: "INSPECTION_BOOKED", label: "Inspection Booked", color: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20" },
+  { key: "NEGOTIATION", label: "Negotiation", color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20" },
+  { key: "CLOSED_WON", label: "Closed Won", color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" },
+  { key: "CLOSED_LOST", label: "Closed Lost", color: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" },
 ] as const;
 
 // Stages restricted once an inspection is scheduled/booked
@@ -75,7 +75,6 @@ export default function LeadsPage() {
   const totalItems = data?.leads?.totalCount ?? leads.length;
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  // Helper to check if lead has a scheduled inspection or advanced stage
   const isInspectionScheduled = (lead: any) => {
     return (
         Boolean(lead.inspection?.scheduledAt) ||
@@ -108,7 +107,6 @@ export default function LeadsPage() {
     const lead = leads.find((l: any) => (l.id || l._id) === leadId);
     if (!lead) return;
 
-    // Prevent drag-dropping back into restricted stages if inspection exists
     if (
         isInspectionScheduled(lead) &&
         RESTRICTED_PAST_INSPECTION.includes(targetStage)
@@ -131,35 +129,35 @@ export default function LeadsPage() {
         : null;
   };
 
+  const getStageColor = (stageKey: string) => {
+    return STAGES.find((s) => s.key === stageKey)?.color ?? "bg-secondary text-foreground";
+  };
+
   return (
-      <div className="space-y-6 sm:space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
           <div>
-            <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-[var(--color-ink)]">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
               Leads Management
             </h1>
-            <p className="text-xs sm:text-sm text-[var(--color-ink-muted)]">
+            <p className="text-sm text-muted-foreground mt-1">
               {loading
-                  ? "Loading leads…"
-                  : `${leads.length} lead${leads.length === 1 ? "" : "s"} total in pipeline`}
+                  ? "Loading leads..."
+                  : `${totalItems} total lead${totalItems === 1 ? "" : "s"} across all pipeline stages`}
             </p>
           </div>
           <Can do="createLeads">
-            <Button
-                asChild
-                variant="default"
-                size="sm"
-                className="w-24 sm:w-auto h-9 font-medium"
-            >
-              <Link href="/account/leads/new">
-                <Plus className="h-4 w-4 mr-1.5" />
-                New lead
+            <Button asChild variant="default" size="sm" className="h-10 px-4 font-medium shadow-sm">
+              <Link href="/account/leads/new" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Add Lead
               </Link>
             </Button>
           </Can>
         </div>
 
-        {/* Stage Summary Cards */}
+        {/* Stage Summary Cards / Drag Targets */}
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
           {STAGES.map(({ key, label }) => {
             const stageCount = leadsByStage(key).length;
@@ -178,25 +176,25 @@ export default function LeadsPage() {
                     onDragLeave={() => setDragOverStage(null)}
                     onDrop={(e) => handleDrop(e, key)}
                     className={cn(
-                        "flex flex-col justify-between rounded-xl border border-[var(--color-border)] bg-[var(--color-paper-raised)] p-4 transition-all duration-150 shadow-sm min-h-[110px]",
+                        "group relative flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-all duration-200 shadow-xs hover:border-primary/40",
                         isDraggingOver &&
-                        "ring-2 ring-[var(--color-brass)] bg-[var(--color-paper-raised)] shadow-md"
+                        "ring-2 ring-primary border-dashed border-primary bg-primary/5 shadow-md scale-[1.02]"
                     )}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                <span className="text-xs font-semibold text-[var(--color-ink-muted)] uppercase tracking-wider line-clamp-1">
+                  <div className="flex items-start justify-between gap-1.5">
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider line-clamp-1">
                   {label}
                 </span>
-                    <span className="text-[11px] font-mono text-[var(--color-ink-muted)]">
+                    <span className="text-[11px] font-mono text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
                   {percentage}%
                 </span>
                   </div>
 
-                  <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[var(--color-ink)]">
+                  <div className="mt-3 flex items-baseline justify-between">
+                <span className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight text-foreground">
                   {stageCount}
                 </span>
-                    <span className="text-[11px] text-[var(--color-ink-muted)] font-medium">
+                    <span className="text-xs text-muted-foreground font-medium">
                   {stageCount === 1 ? "lead" : "leads"}
                 </span>
                   </div>
@@ -205,124 +203,205 @@ export default function LeadsPage() {
           })}
         </div>
 
-        {/* Leads Table */}
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
-          <div className="px-4 py-3.5 border-b border-[var(--color-border)] bg-[var(--color-paper)] flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-[var(--color-ink)]">
+        {/* Leads Container */}
+        <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+          <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center justify-between">
+            <h2 className="text-base font-semibold text-foreground">
               All Leads List
             </h2>
+            <span className="text-xs text-muted-foreground font-mono">
+            Showing {leads.length} of {totalItems}
+          </span>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow className="border-[var(--color-border)] hover:bg-transparent">
-                <TableHead className="font-bold">Client</TableHead>
-                <TableHead className="font-bold">Contact Info</TableHead>
-                <TableHead className="font-bold">Property</TableHead>
-                <TableHead className="font-bold">Created / Inspection</TableHead>
-                <TableHead className="font-bold">Stage</TableHead>
-                <TableHead className="font-bold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="px-4">
-              {leads.map((lead: any) => {
-                const hasInspection = isInspectionScheduled(lead);
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-muted/10">
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="w-[12px]"></TableHead>
+                  <TableHead className="font-semibold text-foreground">Client</TableHead>
+                  <TableHead className="font-semibold text-foreground">Contact</TableHead>
+                  <TableHead className="font-semibold text-foreground">Property</TableHead>
+                  <TableHead className="font-semibold text-foreground">Timeline</TableHead>
+                  <TableHead className="font-semibold text-foreground">Stage</TableHead>
+                  <TableHead className="text-right font-semibold text-foreground">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {leads.map((lead: any) => {
+                  const leadId = lead.id || lead._id;
+                  const hasInspection = isInspectionScheduled(lead);
+                  const createdDateFormatted = formatDate(lead.createdAt);
+                  const inspectionDateFormatted = formatDate(lead.inspection?.scheduledAt);
 
-                // Compute row-level dates
-                const createdDateFormatted = formatDate(lead.createdAt);
-                const inspectionDateFormatted = formatDate(lead.inspection?.scheduledAt);
+                  const availableStages = STAGES.filter((s) => {
+                    if (hasInspection && RESTRICTED_PAST_INSPECTION.includes(s.key)) {
+                      return false;
+                    }
+                    return true;
+                  });
 
-                // Filter stages so New / Contacted are hidden if inspection exists
-                const availableStages = STAGES.filter((s) => {
-                  if (hasInspection && RESTRICTED_PAST_INSPECTION.includes(s.key)) {
-                    return false;
-                  }
-                  return true;
-                });
+                  return (
+                      <TableRow
+                          key={leadId}
+                          draggable={canChangeStage}
+                          onDragStart={(e) =>
+                              e.dataTransfer.setData("text/lead-id", leadId)
+                          }
+                          className="group border-border hover:bg-muted/40 transition-colors cursor-grab active:cursor-grabbing"
+                      >
+                        <TableCell className="pl-3 pr-0 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors">
+                          <GripVertical className="h-4 w-4" />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          <Link
+                              href={`/account/leads/${leadId}`}
+                              className="font-semibold text-foreground hover:text-primary transition-colors capitalize"
+                          >
+                            {lead.clientName || "Unnamed Lead"}
+                          </Link>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <Phone className="h-3.5 w-3.5" />
+                            <span>{lead.clientPhone || "—"}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1.5 text-xs text-foreground capitalize">
+                            <Home className="h-3.5 w-3.5 text-muted-foreground" />
+                            <span className="line-clamp-1">{lead.property || "—"}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <span className="font-medium text-foreground">Created:</span>
+                              <span>{createdDateFormatted || "—"}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="font-medium text-foreground">Inspection:</span>
+                              {inspectionDateFormatted ? (
+                                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">{inspectionDateFormatted}</span>
+                              ) : (
+                                  <span className="italic text-amber-600/80 dark:text-amber-500/80">No inspection fixed</span>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Select
+                              value={lead.stage}
+                              disabled={!canChangeStage}
+                              onValueChange={(value) => handleStageChange(leadId, value)}
+                          >
+                            <SelectTrigger className={cn("h-8 w-[160px] text-xs font-medium border", getStageColor(lead.stage))}>
+                              <SelectValue placeholder="Select stage" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableStages.map((s) => (
+                                  <SelectItem key={s.key} value={s.key} className="text-xs">
+                                    {s.label}
+                                  </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button asChild variant="ghost" size="sm" className="h-8 px-2 text-xs">
+                            <Link href={`/account/leads/${leadId}`} className="flex items-center gap-1.5">
+                              <Edit className="h-3.5 w-3.5 text-muted-foreground" />
+                              Edit
+                            </Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
 
-                return (
-                    <TableRow
-                        key={lead.id || lead._id}
-                        draggable={canChangeStage}
-                        onDragStart={(e) =>
-                            e.dataTransfer.setData("text/lead-id", lead.id || lead._id)
-                        }
-                        className="cursor-grab active:cursor-grabbing px-6"
-                    >
-                      <TableCell className="font-medium">
+          {/* Mobile Data Cards View (Rendered only under `md` breakpoint) */}
+          <div className="divide-y divide-border md:hidden">
+            {leads.map((lead: any) => {
+              const leadId = lead.id || lead._id;
+              const hasInspection = isInspectionScheduled(lead);
+              const createdDateFormatted = formatDate(lead.createdAt);
+              const inspectionDateFormatted = formatDate(lead.inspection?.scheduledAt);
+
+              const availableStages = STAGES.filter((s) => {
+                if (hasInspection && RESTRICTED_PAST_INSPECTION.includes(s.key)) {
+                  return false;
+                }
+                return true;
+              });
+
+              return (
+                  <div key={leadId} className="p-4 space-y-3 bg-card">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
                         <Link
-                            href={`/account/leads/${lead.id || lead._id}`}
-                            className="capitalize"
+                            href={`/account/leads/${leadId}`}
+                            className="text-base font-semibold text-foreground hover:text-primary transition-colors capitalize"
                         >
                           {lead.clientName || "Unnamed Lead"}
                         </Link>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-xs text-[var(--color-ink-muted)] capitalize">
-                          {lead.clientPhone}
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                          <Phone className="h-3 w-3" />
+                          <span>{lead.clientPhone || "—"}</span>
                         </div>
-                      </TableCell>
-                      <TableCell className="text-xs capitalize">
-                        {lead.property || "—"}
-                      </TableCell>
-                      <TableCell className="text-xs">
-                        <div className="flex flex-col gap-1 text-xs text-[var(--color-ink-muted)]">
-                          <div>
-                        <span className="font-semibold text-[var(--color-ink)]">
-                          Created:
-                        </span>{" "}
-                            {createdDateFormatted || "—"}
-                          </div>
-                          <div>
-                        <span className="font-semibold text-[var(--color-ink)]">
-                          Inspection:
-                        </span>{" "}
-                            {inspectionDateFormatted ? (
-                                <span>{inspectionDateFormatted}</span>
-                            ) : (
-                                <span className="italic text-amber-600/80">
-                            No inspection fixed
-                          </span>
-                            )}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                            value={lead.stage}
-                            disabled={!canChangeStage}
-                            onValueChange={(value) =>
-                                handleStageChange(lead.id || lead._id, value)
-                            }
-                        >
-                          <SelectTrigger className="h-8 w-[150px]">
-                            <SelectValue placeholder="Stage" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {availableStages.map((s) => (
-                                <SelectItem key={s.key} value={s.key}>
-                                  {s.label}
-                                </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                      <TableCell className="text-right capitalize">
-                        <Link
-                            href={`/account/leads/${lead.id || lead._id}`}
-                            className="flex items-center gap-2 text-xs cursor-pointer"
-                        >
-                          <Edit className="h-3.5 w-3.5" />
-                          Edit Lead
+                      </div>
+                      <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                        <Link href={`/account/leads/${leadId}`}>
+                          <Edit className="h-3.5 w-3.5 mr-1" />
+                          Edit
                         </Link>
-                      </TableCell>
-                    </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                      </Button>
+                    </div>
 
-          <div className="px-8">
+                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-xs">
+                      <div>
+                        <span className="text-muted-foreground block text-[11px] uppercase tracking-wide">Property</span>
+                        <span className="font-medium text-foreground capitalize line-clamp-1">{lead.property || "—"}</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground block text-[11px] uppercase tracking-wide">Inspection</span>
+                        <span className={cn("font-medium", inspectionDateFormatted ? "text-emerald-600 dark:text-emerald-400" : "italic text-amber-600/80")}>
+                      {inspectionDateFormatted || "None fixed"}
+                    </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                  <span className="text-xs text-muted-foreground">
+                    Created {createdDateFormatted || "—"}
+                  </span>
+                      <Select
+                          value={lead.stage}
+                          disabled={!canChangeStage}
+                          onValueChange={(value) => handleStageChange(leadId, value)}
+                      >
+                        <SelectTrigger className={cn("h-8 w-[140px] text-xs font-medium border", getStageColor(lead.stage))}>
+                          <SelectValue placeholder="Stage" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableStages.map((s) => (
+                              <SelectItem key={s.key} value={s.key} className="text-xs">
+                                {s.label}
+                              </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+              );
+            })}
+          </div>
+
+          {/* Pagination footer */}
+          <div className="px-4 py-3 border-t border-border bg-muted/10">
             <CustomPagination
                 currentPage={page}
                 totalPages={totalPages}

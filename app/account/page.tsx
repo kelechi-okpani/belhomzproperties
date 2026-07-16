@@ -8,9 +8,10 @@ import {
     AlertTriangle,
     TrendingUp,
     Calendar,
-    Sparkles
+    Sparkles,
+    RefreshCw,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { ANALYTICS_QUERY } from "@/dashboard/lib/graphql/documents";
 import { StatCard } from "@/dashboard/components/dashboard/stat-card";
 import { SalesFunnelChart } from "@/dashboard/components/dashboard/sales-funnel-chart";
@@ -22,6 +23,7 @@ import { RevenueTrendChart } from "@/dashboard/components/dashboard/revenue-tren
 import { AgentLeaderboard } from "@/dashboard/components/dashboard/agent-leaderboard";
 import { AgentPerformanceCard } from "@/dashboard/components/dashboard/agent-performance-card";
 import { MyActivityStatsCard } from "@/dashboard/components/dashboard/my-activity-stats-card";
+import { Button } from "@/components/ui/button";
 
 function formatCurrency(amount: number) {
     return new Intl.NumberFormat("en-NG", {
@@ -40,7 +42,7 @@ function getGreeting() {
 
 export default function DashboardPage() {
     const user = useAuthStore((s) => s.user);
-    const { data: rawData, loading, error } = useQuery<any>(ANALYTICS_QUERY);
+    const { data: rawData, loading, error, refetch } = useQuery<any>(ANALYTICS_QUERY);
     const [greeting, setGreeting] = useState("Welcome");
     const [mounted, setMounted] = useState(false);
 
@@ -48,8 +50,6 @@ export default function DashboardPage() {
         setGreeting(getGreeting());
         setMounted(true);
     }, []);
-
-    console.log({ rawData, loading, error }, "Apollo State Check");
 
     const data = rawData?.analytics;
     const availability = data?.propertyAvailability;
@@ -61,28 +61,40 @@ export default function DashboardPage() {
     const showRevenueTrend = can(user?.role, "viewRevenueTrend");
     const showActivityStats = can(user?.role, "viewMyActivityStats");
 
-    const visiblePerformanceCardsCount = [
-        showMyPerformance,
-        showLeaderboard,
-        showRevenueTrend,
-        showActivityStats
-    ].filter(Boolean).length;
+    const visiblePerformanceCardsCount = useMemo(() => {
+        return [
+            showMyPerformance,
+            showLeaderboard,
+            showRevenueTrend,
+            showActivityStats,
+        ].filter(Boolean).length;
+    }, [showMyPerformance, showLeaderboard, showRevenueTrend, showActivityStats]);
+
+    // Determine grid columns dynamically based on how many cards are visible
+    const performanceGridCols = useMemo(() => {
+        if (visiblePerformanceCardsCount === 1) return "grid-cols-1";
+        if (visiblePerformanceCardsCount === 3) return "grid-cols-1 lg:grid-cols-3";
+        return "grid-cols-1 lg:grid-cols-2";
+    }, [visiblePerformanceCardsCount]);
 
     if (loading) {
         return (
-            <div className="space-y-6 animate-pulse">
-                <div className="space-y-2">
-                    <div className="h-4 w-32 bg-muted rounded" />
-                    <div className="h-8 w-64 bg-muted rounded" />
+            <div className="space-y-6 animate-pulse p-1">
+                <div className="flex justify-between items-center border-b border-border/40 pb-4">
+                    <div className="space-y-2">
+                        <div className="h-7 w-56 bg-muted rounded-sm" />
+                        <div className="h-4 w-80 bg-muted/60 rounded-sm" />
+                    </div>
+                    <div className="h-8 w-36 bg-muted/50 rounded-sm" />
                 </div>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {[...Array(4)].map((_, i) => (
-                        <div key={i} className="h-32 bg-card rounded-xl border border-border" />
+                        <div key={i} className="h-28 bg-card rounded-md border border-border/60" />
                     ))}
                 </div>
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    <div className="h-96 bg-card rounded-xl border border-border" />
-                    <div className="h-96 bg-card rounded-xl border border-border" />
+                    <div className="h-80 bg-card rounded-md border border-border/60" />
+                    <div className="h-80 bg-card rounded-md border border-border/60" />
                 </div>
             </div>
         );
@@ -90,45 +102,59 @@ export default function DashboardPage() {
 
     if (error) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[400px] border border-dashed rounded-xl p-8 bg-card text-center">
-                <AlertTriangle className="h-12 w-12 text-destructive mb-4" />
-                <h3 className="font-semibold text-lg text-foreground">Unable to load dashboard data</h3>
-                <p className="text-sm text-muted-foreground mt-1 max-w-sm">
-                    Something went wrong while communicating with the data API. Please try refreshing the page.
+            <div className="flex flex-col items-center justify-center min-h-[380px] border border-dashed border-destructive/30 rounded-md p-8 bg-card/50 text-center">
+                <div className="p-3 bg-destructive/10 rounded-full mb-3">
+                    <AlertTriangle className="h-6 w-6 text-destructive" />
+                </div>
+                <h3 className="font-semibold text-base text-foreground">
+                    Unable to synchronize dashboard metrics
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1 max-w-sm mb-4">
+                    We encountered an issue fetching live statistics from the backend service.
                 </p>
+                <Button
+                    onClick={() => refetch()}
+                    variant="outline"
+                    size="sm"
+                    className="h-8 rounded-sm gap-2 text-xs font-medium"
+                >
+                    <RefreshCw className="h-3.5 w-3.5" /> Retry Sync
+                </Button>
             </div>
         );
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-
-            {/* Welcome Banner */}
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-border/60 pb-5">
+        <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header Banner */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-border/80 pb-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground flex items-center gap-2">
+                    <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
                         {greeting}, {user?.name?.split(" ")[0] ?? "there"}
-                        <Sparkles className="h-5 w-5 text-primary/80 animate-pulse" />
+                        <Sparkles className="h-4 w-4 text-primary animate-pulse" />
                     </h1>
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Here is a consolidated look at your business vitals and properties portfolio today.
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                        Real-time portfolio metrics, active leads, and financial breakdown.
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 self-start sm:self-center rounded-lg border border-border bg-card text-muted-foreground shadow-sm">
+                <div className="flex items-center gap-2 text-xs font-semibold px-2.5 py-1.5 self-start sm:self-center rounded-md border border-border bg-card/60 text-muted-foreground shadow-2xs backdrop-blur-xs">
                     <Calendar className="h-3.5 w-3.5 text-primary" />
-                    {/* Guard with mounted state to prevent hydration mismatches */}
                     <span>
-                        {mounted
-                            ? new Date().toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
-                            : "Loading date..."
-                        }
-                    </span>
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping ml-1" />
+            {mounted
+                ? new Date().toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                })
+                : "Loading date..."}
+          </span>
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse ml-0.5" />
                 </div>
             </div>
 
-            {/* Core KPI Stat Cards */}
+            {/* Core Operational Metrics */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                     label="New Leads Today"
@@ -161,9 +187,9 @@ export default function DashboardPage() {
                 </Can>
             </div>
 
-            {/* Role-Specific Dynamic Performance Grid */}
+            {/* Dynamic Performance Breakdown Grid */}
             {visiblePerformanceCardsCount > 0 && (
-                <div className={`grid grid-cols-1 gap-6 ${visiblePerformanceCardsCount === 1 ? 'lg:grid-cols-1' : 'lg:grid-cols-2'}`}>
+                <div className={` gap-5 ${performanceGridCols}`}>
                     <Can do="viewMyPerformance">
                         <AgentPerformanceCard data={data?.myPerformance} />
                     </Can>
@@ -179,7 +205,7 @@ export default function DashboardPage() {
                 </div>
             )}
 
-            {/* Interactive Charts & Live Streams */}
+            {/* Funnel & Property Breakdown Section */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <div className="space-y-6 lg:col-span-2">
                     <Can do="viewSalesFunnel">
@@ -187,23 +213,40 @@ export default function DashboardPage() {
                     </Can>
 
                     <Can do="viewProperties">
-                        <div className="space-y-3">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                                Property Inventory Summary
-                            </h4>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                <StatCard label="Available" value={availability?.available ?? 0} icon={Building2} tone="success" />
-                                <StatCard label="Reserved" value={availability?.reserved ?? 0} icon={Building2} tone="warning" />
-                                <StatCard label="Sold" value={availability?.sold ?? 0} icon={Building2} tone="default" />
+                        <div className="space-y-2.5">
+                            <div className="flex items-center justify-between">
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                    Inventory Allocation
+                                </h4>
+                            </div>
+                            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                                <StatCard
+                                    label="Available"
+                                    value={availability?.available ?? 0}
+                                    icon={Building2}
+                                    tone="success"
+                                />
+                                <StatCard
+                                    label="Reserved"
+                                    value={availability?.reserved ?? 0}
+                                    icon={Building2}
+                                    tone="warning"
+                                />
+                                <StatCard
+                                    label="Sold"
+                                    value={availability?.sold ?? 0}
+                                    icon={Building2}
+                                    tone="default"
+                                />
                             </div>
                         </div>
                     </Can>
                 </div>
 
-                {/* Live Stream feed */}
-                {/*<div className="lg:col-span-1">*/}
-                {/*    <ActivityTicker initial={data?.recentActivity ?? []} />*/}
-                {/*</div>*/}
+                {/* Live Activity Ticker Feed */}
+                {/* <div className="lg:col-span-1">
+          <ActivityTicker initial={data?.recentActivity ?? []} />
+        </div> */}
             </div>
         </div>
     );

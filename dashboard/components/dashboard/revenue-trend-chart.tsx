@@ -23,7 +23,7 @@ interface RevenueTrendChartProps {
 
 export function RevenueTrendChart({ data: trend = [] }: RevenueTrendChartProps) {
     return (
-        <Card className="border border-border bg-card shadow-sm">
+        <Card className="border border-border bg-card shadow-sm mt-6 pt-6">
             <CardHeader>
                 <CardTitle className="text-base font-bold text-foreground">Revenue Trend (6 Months)</CardTitle>
             </CardHeader>

@@ -27,7 +27,7 @@ const NAV_ITEMS: {
   { href: "/account", label: "Dashboard", icon: LayoutDashboard },
   { href: "/account/property", label: "Properties", icon: Building2, permission: "viewProperties" },
   { href: "/account/leads", label: "Leads", icon: Users, permission: "viewLeads" },
-  { href: "/account/payments", label: "Payments", icon: Wallet, permission: "viewPayments" },
+  // { href: "/account/payments", label: "Payments", icon: Wallet, permission: "viewPayments" },
   { href: "/account/enquiries", label: "Enquiries", icon: MessageSquare, permission: "viewLeads" },
   { href: "/account/staff", label: "Staff", icon: UserCog, permission: "viewStaff" },
 
@@ -130,26 +130,26 @@ export function Sidebar({ isOpen, onClose, isCollapsed }: SidebarProps) {
 
         {/* User Dashboard Profile Tray */}
         <div className="border-t border-border p-4 space-y-3 bg-[var(--sidebar,var(--card))]">
-          <Link
-              href="/account/settings"
-              onClick={onClose}
-              title={isCollapsed ? "Settings" : undefined}
-              className={cn(
-                  "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",
-                  pathname?.startsWith("/account/settings")
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
-                  isCollapsed && "md:justify-center md:px-0"
-              )}
-          >
-            <Settings className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:rotate-45" />
-            <span className={cn(
-                "transition-all duration-300 whitespace-nowrap",
-                isCollapsed ? "md:w-0 md:opacity-0 md:pointer-events-none" : "w-auto opacity-100"
-            )}>
-              Settings
-            </span>
-          </Link>
+          {/*<Link*/}
+          {/*    href="/account/settings"*/}
+          {/*    onClick={onClose}*/}
+          {/*    title={isCollapsed ? "Settings" : undefined}*/}
+          {/*    className={cn(*/}
+          {/*        "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",*/}
+          {/*        pathname?.startsWith("/account/settings")*/}
+          {/*            ? "bg-primary text-primary-foreground shadow-sm"*/}
+          {/*            : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",*/}
+          {/*        isCollapsed && "md:justify-center md:px-0"*/}
+          {/*    )}*/}
+          {/*>*/}
+          {/*  <Settings className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:rotate-45" />*/}
+          {/*  <span className={cn(*/}
+          {/*      "transition-all duration-300 whitespace-nowrap",*/}
+          {/*      isCollapsed ? "md:w-0 md:opacity-0 md:pointer-events-none" : "w-auto opacity-100"*/}
+          {/*  )}>*/}
+          {/*    Settings*/}
+          {/*  </span>*/}
+          {/*</Link>*/}
 
           <div className={cn(
               "flex items-center justify-between rounded-lg border border-border bg-background p-3 shadow-sm transition-all duration-300",

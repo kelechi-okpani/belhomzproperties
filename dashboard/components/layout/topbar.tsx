@@ -11,7 +11,7 @@ const TITLES: Record<string, string> = {
   "/account/": "Overview Analytics",
   "/account/property": "Properties Portfolio",
   "/account/leads": "Leads Pipeline",
-  "/account/payments": "Payments & Financials",
+  // "/account/payments": "Payments & Financials",
     "/account/enquiries": "Enquiry Management",
   "/account/staff": "Staff Management",
   "/account/activities": "Activity Audit Feed",

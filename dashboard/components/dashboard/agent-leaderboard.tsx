@@ -20,7 +20,7 @@ export function AgentLeaderboard({ data = [] }: AgentLeaderboardProps) {
     const agents = [...data];
 
     return (
-        <Card className="border border-border bg-card shadow-sm">
+        <Card className="border border-border bg-card shadow-sm mt-6 pt-6">
             <CardHeader>
                 <CardTitle className="text-base font-bold text-foreground">Agent Leaderboard</CardTitle>
             </CardHeader>

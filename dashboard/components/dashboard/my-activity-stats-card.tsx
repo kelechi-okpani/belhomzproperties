@@ -27,9 +27,9 @@ interface MyActivityStatsProps {
 
 export function MyActivityStatsCard({ data: stats }: MyActivityStatsProps) {
     return (
-        <Card className="border border-border bg-card shadow-sm">
+        <Card className="border border-border bg-card shadow-sm mt-6 pt-6">
             <CardHeader>
-                <CardTitle className="text-base font-bold text-foreground">My Activity (Last 30 Days)</CardTitle>
+                <CardTitle className="text-base font-bold text-foreground">Activity (Last 30 Days)</CardTitle>
             </CardHeader>
             <CardContent>
                 <p className="font-display text-3xl font-bold tracking-tight text-foreground">

@@ -128,7 +128,7 @@ export default function NewLeadPage() {
                 description: `Lead for ${values.clientName} has been created.`,
             });
 
-            if (data?.createLead?.id) {
+            if (data?.createLead) {
                 router.push(`/account/leads`);
                 // router.push(`/account/leads/${data.createLead.id}`);
             } else {
