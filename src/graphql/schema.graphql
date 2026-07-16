@@ -183,6 +183,7 @@ type Mutation {
     resetPassword(newPassword: String!, token: String!): Boolean!
     scheduleInspection(id: ID!, input: ScheduleInspectionInput!): Lead!
     updateEnquiryStatus(id: ID!, status: EnquiryStatus!): Enquiry!
+    updateLead(id: ID!, input: UpdateLeadInput!): Lead!
     updateLeadStage(id: ID!, stage: LeadStage!): Lead!
     updateProfile(input: UpdateProfileInput!): PublicUser!
     updateProperty(id: ID!, input: UpdatePropertyInput!): Property!
@@ -378,6 +379,7 @@ input CreateLeadInput {
     clientName: String!
     clientPhone: String!
     property: ID
+    stage: LeadStage!
 }
 
 input CreatePaymentInput {
@@ -443,6 +445,15 @@ input ScheduleInspectionInput {
     location: String!
     notes: String
     scheduledAt: String!
+    stage: LeadStage!
+}
+
+input UpdateLeadInput {
+    clientEmail: String
+    clientName: String
+    clientPhone: String
+    property: ID!
+    stage: LeadStage!
 }
 
 input UpdateProfileInput {

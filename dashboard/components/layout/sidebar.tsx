@@ -12,6 +12,7 @@ import {
   Settings,
   LogOut,
   X,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "../../store/auth-store";
@@ -27,8 +28,11 @@ const NAV_ITEMS: {
   { href: "/account/property", label: "Properties", icon: Building2, permission: "viewProperties" },
   { href: "/account/leads", label: "Leads", icon: Users, permission: "viewLeads" },
   { href: "/account/payments", label: "Payments", icon: Wallet, permission: "viewPayments" },
-  { href: "/account/activities", label: "Activity", icon: Radio, permission: "viewActivities" },
+  { href: "/account/enquiries", label: "Enquiries", icon: MessageSquare, permission: "viewLeads" },
   { href: "/account/staff", label: "Staff", icon: UserCog, permission: "viewStaff" },
+
+  { href: "/account/activities", label: "Activity", icon: Radio, permission: "viewActivities" },
+
 ];
 
 interface SidebarProps {

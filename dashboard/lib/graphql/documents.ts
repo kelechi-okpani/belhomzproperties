@@ -1,6 +1,22 @@
 import { gql } from "@apollo/client";
 
 
+
+export const ME_QUERY = gql`
+  query Me {
+      me {
+        id
+        name
+        email
+        role
+        phone
+        isActive
+      }
+    }
+`;
+
+
+
 export const ANALYTICS_QUERY = gql`
 query Analytics {
   analytics {
@@ -107,21 +123,11 @@ query Analytics {
 }
 `;
 
-export const ACTIVITY_FEED_SUBSCRIPTION = gql`
-  subscription OnActivity {
-    activityFeed {
-      id
-      type
-      message
-      entityType
-      entityId
-      createdAt
-    }
-  }
-`;
 
 
 
+
+// PROPERTIES START --- HERE
 
 export const PROPERTIES_QUERY = gql`
   query Properties($filter: PropertyFilterInput) {
@@ -191,139 +197,250 @@ export const UPDATE_PROPERTY_STATUS_MUTATION = gql`
 `;
 
 export const UPDATE_PROPERTY_MUTATION = gql`
-  mutation UpdateProperty($updatePropertyId: ID!, $input: UpdatePropertyInput!) {
-    updateProperty(id: $updatePropertyId, input: $input) {
-      id
-      title
-      description
-      price
-      location
-      type
-      size
-      amenities
-      status
-      images {
-        url
-        publicId
-      }
-      createdBy
-      createdAt
-      updatedAt
+  mutation UpdateProperty($input: UpdatePropertyInput!, $updatePropertyId: ID!) {
+  updateProperty(input: $input, id: $updatePropertyId) {
+    id
+    title
+    description
+    price
+    location
+    type
+    size
+    amenities
+    status
+    images {
+      url
+      publicId
     }
+    createdBy
+    createdAt
+    updatedAt
   }
+}
 `;
 
 export const DELETE_PROPERTY_MUTATION = gql`
-  mutation DeleteProperty($deletePropertyId: ID!) {
-    deleteProperty(id: $deletePropertyId)
-  }
-`;
-
-
-
-
-
-
-
-
-export const ME_QUERY = gql`
-  query Me {
-    me {
-      id
-      name
-      email
-      role
-      phone
-      isActive
+     mutation DeleteProperty($deletePropertyId: ID!) {
+      deleteProperty(id: $deletePropertyId)
     }
-  }
 `;
 
 
+// PROPERTIES ENDS --- HERE
 
 
 
-
+// LEADS & CLIENTS START --- HERE
 
 export const CREATE_LEAD_MUTATION = gql`
-  mutation CreateLead($input: CreateLeadInput!) {
-    createLead(input: $input) {
-      id
-    }
-  }
+    mutation CreateLead($input: CreateLeadInput!) {
+          createLead(input: $input) {
+            id
+            clientName
+            clientPhone
+            clientEmail
+            property
+            assignedAgent
+            stage
+            activities {
+              note
+              createdBy
+              createdAt
+            }
+            inspection {
+              scheduledAt
+              location
+              notes
+              completed
+            }
+            createdAt
+            updatedAt
+          }
+        }
 `;
+
+export const UPDATE_LEAD_MUTATION = gql`
+    mutation UpdateLead($input: UpdateLeadInput!, $updateLeadId: ID!) {
+          updateLead(input: $input, id: $updateLeadId) {
+            id
+            clientName
+            clientPhone
+            clientEmail
+            property
+            assignedAgent
+            stage
+            activities {
+              note
+              createdBy
+              createdAt
+            }
+            inspection {
+              scheduledAt
+              location
+              notes
+              completed
+            }
+            createdAt
+            updatedAt
+          }
+        }
+`;
+
 
 export const UPDATE_LEAD_STAGE = gql`
-  mutation UpdateLeadStage($id: ID!, $stage: LeadStage!) {
-    updateLeadStage(id: $id, stage: $stage) {
-      id
-      stage
+    mutation UpdateLeadStage($updateLeadStageId: ID!, $stage: LeadStage!) {
+  updateLeadStage(id: $updateLeadStageId, stage: $stage) {
+    id
+    clientName
+    clientPhone
+    clientEmail
+    property
+    assignedAgent
+    stage
+    activities {
+      note
+      createdBy
+      createdAt
     }
+    inspection {
+      scheduledAt
+      location
+      notes
+      completed
+    }
+    createdAt
+    updatedAt
   }
-`;
+}
+`
+
 
 export const LEADS_QUERY = gql`
-  query Leads($filter: LeadFilterInput) {
-    leads(filter: $filter) {
-      id
-      clientName
-      clientPhone
-      stage
-      assignedAgent
+   query Leads($filter: LeadFilterInput) {
+  leads(filter: $filter) {
+    id
+    clientName
+    clientPhone
+    clientEmail
+    property
+    assignedAgent
+    stage
+    activities {
+      note
+      createdBy
       createdAt
-      inspection {
-        scheduledAt
-        location
-      }
     }
+    inspection {
+      scheduledAt
+      location
+      notes
+      completed
+    }
+    createdAt
+    updatedAt
   }
+}
 `;
 
 export const LEAD_DETAIL_QUERY = gql`
-  query LeadDetail($id: ID!) {
-    lead(id: $id) {
-      id
-      clientName
-      clientPhone
-      clientEmail
-      property
-      assignedAgent
-      stage
-      activities {
-        note
-        createdBy
-        createdAt
-      }
-      inspection {
-        scheduledAt
-        location
-        notes
-        completed
-      }
+  query Lead($leadId: ID!) {
+  lead(id: $leadId) {
+    id
+    clientName
+    clientPhone
+    clientEmail
+    property
+    assignedAgent
+    stage
+    activities {
+      note
+      createdBy
       createdAt
     }
+    inspection {
+      scheduledAt
+      location
+      notes
+      completed
+    }
+    createdAt
+    updatedAt
   }
+}
 `;
-
-
-
-
 
 export const SCHEDULE_INSPECTION_MUTATION = gql`
-  mutation ScheduleInspection($id: ID!, $input: ScheduleInspectionInput!) {
-    scheduleInspection(id: $id, input: $input) {
-      id
-      stage
-      inspection {
-        scheduledAt
-        location
+    mutation ScheduleInspection($input: ScheduleInspectionInput!, $scheduleInspectionId: ID!) {
+      scheduleInspection(input: $input, id: $scheduleInspectionId) {
+        id
+        clientName
+        clientPhone
+        clientEmail
+        property
+        assignedAgent
+        stage
+        activities {
+          note
+          createdBy
+          createdAt
+        }
+        inspection {
+          scheduledAt
+          location
+          notes
+          completed
+        }
+        createdAt
+        updatedAt
       }
     }
-  }
 `;
 
+export const ADD_LEAD_ACTIVITY_MUTATION = gql`
+    mutation AddLeadActivity($addLeadActivityId: ID!, $note: String!) {
+      addLeadActivity(id: $addLeadActivityId, note: $note) {
+        id
+        clientName
+        clientPhone
+        clientEmail
+        property
+        assignedAgent
+        stage
+        activities {
+          note
+          createdBy
+          createdAt
+        }
+        inspection {
+          scheduledAt
+          location
+          notes
+          completed
+        }
+        createdAt
+        updatedAt
+      }
+}
+`
 
 
+// LEADS & CLIENTS      ENDS --- HERE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// PAYMENTS    START --- HERE
 
 export const CREATE_PAYMENT_MUTATION = gql`
   mutation CreatePayment($input: CreatePaymentInput!) {
@@ -364,7 +481,7 @@ export const RECORD_INSTALLMENT_PAYMENT_MUTATION = gql`
   }
 `;
 
-
+// PAYMENTS    ENDS --- HERE
 
 
 export const STAFF_QUERY = gql`
@@ -408,34 +525,6 @@ export const REACTIVATE_USER_MUTATION = gql`
 `;
 
 
-
-export const ADD_LEAD_ACTIVITY_MUTATION = gql`
-  mutation AddLeadActivity($id: ID!, $note: String!) {
-    addLeadActivity(id: $id, note: $note) {
-      id
-      activities {
-        note
-        createdAt
-      }
-    }
-  }
-`;
-
-export const ACTIVITIES_HISTORY_QUERY = gql`
-  query ActivitiesHistory($limit: Int) {
-    activities(limit: $limit) {
-      id
-      type
-      message
-      entityType
-      entityId
-      actor
-      createdAt
-    }
-  }
-`;
-
-
 export const GET_INSTAGRAM_FEED = gql`
     query GetInstagramFeed($page: Int, $limit: Int) {
       getInstagramFeed(page: $page, limit: $limit) {
@@ -460,6 +549,81 @@ export const GET_INSTAGRAM_FEED = gql`
 
 `
 //GET_INSTAGRAM_FEED, SYNC_INSTAGRAM_FEED
+
+
+
+
+export const ACTIVITIES_HISTORY_QUERY = gql`
+  query Activities($limit: Int) {
+    activities(limit: $limit) {
+      id
+      type
+      message
+      entityType
+      entityId
+      actor
+      createdAt
+    }
+  }
+`;
+
+export const ACTIVITY_FEED_SUBSCRIPTION = gql`
+  subscription ActivityFeed {
+    activityFeed {
+      id
+      type
+      message
+      entityType
+      entityId
+      actor
+      createdAt
+    }
+  }
+`;
+
+export const GET_ENQUIRIES = gql`
+query GetEnquiries($page: Int, $limit: Int, $status: EnquiryStatus) {
+  getEnquiries(page: $page, limit: $limit, status: $status) {
+    enquiries {
+      _id
+      fullName
+      email
+      phone
+      subject
+      message
+      status
+      createdAt
+      updatedAt
+    }
+    pagination {
+      total
+      page
+      pages
+    }
+  }
+}
+`
+
+
+export const GET_ENQUIRY_BY_ID = gql`
+query GetEnquiryById($getEnquiryByIdId: ID!) {
+  getEnquiryById(id: $getEnquiryByIdId) {
+    _id
+    fullName
+    email
+    phone
+    subject
+    message
+    status
+    createdAt
+    updatedAt
+  }
+}
+
+`
+
+
+// GET_ENQUIRIES, GET_ENQUIRY_BY_ID
 
 
 
@@ -512,3 +676,7 @@ export const REVENUE_TREND_QUERY = gql`
     }
   }
 `;
+
+
+
+

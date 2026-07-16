@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 import { gql, CombinedGraphQLErrors } from "@apollo/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Label } from "@/dashboard/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -36,9 +37,29 @@ const LOGIN_MUTATION = gql`
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const setSession = useAuthStore((s) => s.setSession);
+  const token = useAuthStore((s) => s.accessToken);
+
   const [serverError, setServerError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Session expiry check & auto-redirect if already logged in
+  useEffect(() => {
+    if (token) {
+      const redirectUrl = searchParams.get("redirect") || "/account";
+      router.replace(redirectUrl);
+      return;
+    }
+
+    const hasExpiredNotice = sessionStorage.getItem("session_expired_notice");
+    if (hasExpiredNotice) {
+      toast.error("Your session has expired. Please log in again to continue.", {
+        id: "session-expired-notice",
+      });
+      sessionStorage.removeItem("session_expired_notice");
+    }
+  }, [token, router, searchParams]);
 
   const {
     register,
@@ -54,7 +75,9 @@ export default function LoginPage() {
       const { data } = await login({ variables: { input: values } });
       const { user, tokens } = data.login;
       setSession(user, tokens.accessToken, tokens.refreshToken);
-      router.push("/account");
+
+      const redirectUrl = searchParams.get("redirect") || "/account";
+      router.push(redirectUrl);
     } catch (err) {
       if (CombinedGraphQLErrors.is(err)) {
         setServerError(err.errors[0]?.message ?? "Something went wrong");
@@ -78,8 +101,9 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-white">Email</Label>
-              {/* 🚀 Email Input: Added premium semi-transparent white border that illuminates completely on focus */}
+              <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider text-white">
+                Email
+              </Label>
               <Input
                   id="email"
                   type="email"
@@ -89,13 +113,17 @@ export default function LoginPage() {
                   {...register("email")}
               />
               {errors.email && (
-                  <p className="text-xs font-medium text-[var(--color-danger)]">{errors.email.message}</p>
+                  <p className="text-xs font-medium text-[var(--color-danger)]">
+                    {errors.email.message}
+                  </p>
               )}
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-white">Password</Label>
+                <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wider text-white">
+                  Password
+                </Label>
                 <Link
                     href="/forgot-password"
                     className="text-xs font-medium text-white hover:text-[var(--color-brass-hover)] transition-colors"
@@ -103,26 +131,35 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
-              <div className="relative">
-                {/* 🚀 Password Input: Added matching premium white border variant */}
+              <div className="relative flex items-center w-full">
+                {/* Input with extra right padding (pr-14) so text doesn't touch the right-aligned button */}
                 <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     autoComplete="current-password"
                     placeholder="••••••••"
-                    className="h-11 pr-10 border-white focus:border-white bg-white/5 text-white placeholder:text-white/50 transition-all duration-200 focus:ring-2 focus:ring-[var(--color-brass)]/20"
+                    className="h-11 pr-14 border-white focus:border-white bg-white/5 text-white placeholder:text-white/50 transition-all duration-200 focus:ring-2 focus:ring-[var(--color-brass)]/20"
                     {...register("password")}
                 />
+
+                {/* Pinned to the far right end (right-2) */}
                 <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-white transition-colors focus:outline-none"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center h-8 w-8 rounded-md bg-white/10 hover:bg-white/20 active:bg-white/30 text-white border border-white/20 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-white/40 shrink-0"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-white" />
+                  ) : (
+                      <Eye className="h-4 w-4 text-white" />
+                  )}
                 </button>
               </div>
               {errors.password && (
-                  <p className="text-xs font-medium text-[var(--color-danger)]">{errors.password.message}</p>
+                  <p className="text-xs font-medium text-[var(--color-danger)]">
+                    {errors.password.message}
+                  </p>
               )}
             </div>
 
@@ -132,7 +169,12 @@ export default function LoginPage() {
                 </p>
             )}
 
-            <Button type="submit" variant="default" className="w-full h-11 font-medium text-base shadow-sm transition-transform active:scale-[0.99]" disabled={isSubmitting}>
+            <Button
+                type="submit"
+                variant="default"
+                className="w-full h-11 font-medium text-base shadow-sm transition-transform active:scale-[0.99]"
+                disabled={isSubmitting}
+            >
               {isSubmitting ? "Signing in…" : "Sign in"}
             </Button>
           </form>

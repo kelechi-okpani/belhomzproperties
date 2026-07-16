@@ -4,16 +4,19 @@ import { useRouter } from "next/navigation";
 import { useForm, type SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { CombinedGraphQLErrors } from "@apollo/client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, Upload, X, Loader2, CheckCircle2, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Label } from "@/dashboard/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { CREATE_PROPERTY_MUTATION } from "@/dashboard/lib/graphql/documents";
+import {
+    UPDATE_PROPERTY_MUTATION,
+    PROPERTY_DETAIL_QUERY
+} from "@/dashboard/lib/graphql/documents";
 import useUploader from "@/dashboard/lib/useUploader";
 
 const propertyFormSchema = z.object({
@@ -28,8 +31,9 @@ const propertyFormSchema = z.object({
             url: z.string().url("Must be a valid URL"),
             publicId: z.string().min(1, "Public ID is required"),
         })
-    ).min(1, "Please upload at least one property image."),
+    ).min(1, "Please keep or upload at least one property image."),
 });
+
 type PropertyFormValues = z.infer<typeof propertyFormSchema>;
 
 interface LocalFileQueue {
@@ -40,12 +44,22 @@ interface LocalFileQueue {
     formIndex?: number;
 }
 
-export default function NewProperty() {
+interface EditPropertyProps {
+    propertyId: string;
+}
+
+export default function EditProperty({ propertyId }: EditPropertyProps) {
     const router = useRouter();
     const { toast } = useToast();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [serverError, setServerError] = useState<string | null>(null);
     const [uploadQueue, setUploadQueue] = useState<LocalFileQueue[]>([]);
+
+    // 1. Fetch Existing Property Details using PROPERTY_DETAIL_QUERY
+    const { data: initialData, loading: fetchingProperty, error: fetchError } = useQuery(PROPERTY_DETAIL_QUERY, {
+        variables: { propertyId },
+        skip: !propertyId,
+    }) as any;
 
     const {
         register,
@@ -54,7 +68,8 @@ export default function NewProperty() {
         getValues,
         watch,
         control,
-        formState: { errors, isSubmitting },
+        reset,
+        formState: { errors, isSubmitting, isDirty },
     } = useForm<PropertyFormValues>({
         resolver: zodResolver(propertyFormSchema),
         defaultValues: {
@@ -67,6 +82,38 @@ export default function NewProperty() {
             images: [],
         },
     });
+
+    // Populate form state once existing property data arrives
+    useEffect(() => {
+        const property = initialData?.property;
+        if (property) {
+            const formattedImages = (property.images || []).map((img: any) => ({
+                url: img.url || "",
+                publicId: img.publicId || "",
+            }));
+
+            reset({
+                title: property.title || "",
+                description: property.description || "",
+                price: property.price || "",
+                location: property.location || "",
+                type: property.type || "APARTMENT",
+                size: property.size || "",
+                images: formattedImages,
+            });
+
+            // Populate uploadQueue for pre-existing images so they render in the grid layer
+            const initialQueueItems: LocalFileQueue[] = formattedImages.map((img: any, idx: number) => ({
+                id: `existing-${idx}-${img.publicId}`,
+                status: "success",
+                uploadedUrl: img.url,
+                uploadedPublicId: img.publicId,
+                formIndex: idx,
+            }));
+
+            setUploadQueue(initialQueueItems);
+        }
+    }, [initialData, reset]);
 
     const watchedImages = watch("images") || [];
 
@@ -83,7 +130,8 @@ export default function NewProperty() {
         },
     });
 
-    const [createProperty] = useMutation<any>(CREATE_PROPERTY_MUTATION);
+    // 2. Setup Update Property Mutation
+    const [updateProperty] = useMutation<any>(UPDATE_PROPERTY_MUTATION);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -106,7 +154,7 @@ export default function NewProperty() {
                     const nextImages = [...currentImages, newImage];
                     const savedIndex = nextImages.length - 1;
 
-                    setValue("images", nextImages, { shouldValidate: true });
+                    setValue("images", nextImages, { shouldValidate: true, shouldDirty: true });
 
                     setUploadQueue((prev) =>
                         prev.map((item) =>
@@ -116,15 +164,15 @@ export default function NewProperty() {
                                     status: "success",
                                     uploadedUrl: result.secure_url,
                                     uploadedPublicId: result.public_id,
-                                    formIndex: savedIndex
+                                    formIndex: savedIndex,
                                 }
                                 : item
                         )
                     );
 
                     toast({
-                        title: "Image uploaded successfully",
-                        description: `${file.name.slice(0, 20)}${file.name.length > 20 ? "..." : ""} added to preview.`,
+                        title: "Image added",
+                        description: `${file.name.slice(0, 20)} uploaded to gallery.`,
                     });
                 } else {
                     throw new Error("Missing secure URL from upload response");
@@ -149,7 +197,7 @@ export default function NewProperty() {
 
     const removeUploadedImage = (indexToRemove: number, publicId: string) => {
         const updated = watchedImages.filter((_, idx) => idx !== indexToRemove);
-        setValue("images", updated, { shouldValidate: true });
+        setValue("images", updated, { shouldValidate: true, shouldDirty: true });
 
         setUploadQueue((prev) => {
             const remaining = prev.filter((f) => f.uploadedPublicId !== publicId);
@@ -163,7 +211,7 @@ export default function NewProperty() {
         });
 
         toast({
-            description: "Image removed from property.",
+            description: "Image removed.",
         });
     };
 
@@ -173,50 +221,83 @@ export default function NewProperty() {
 
     const isCurrentlyUploading = uploadQueue.some((item) => item.status === "uploading");
 
+    // 3. Form Submit Handler using exact GraphQL Update Input Structure
     const onSubmit: SubmitHandler<PropertyFormValues> = async (values) => {
         setServerError(null);
 
         if (values.images.length === 0) {
-            setServerError("Please upload at least one property image before submitting.");
+            setServerError("Please upload or retain at least one image.");
             return;
         }
 
         try {
-            const { data } = await createProperty({
+            const { data } = await updateProperty({
                 variables: {
-                    input: values,
+                    updatePropertyId: propertyId,
+                    input: {
+                        title: values.title,
+                        description: values.description,
+                        price: values.price,
+                        location: values.location,
+                        type: values.type,
+                        size: values.size,
+                        amenities: initialData?.property?.amenities || null,
+                        images: values.images.map((img) => ({
+                            url: img.url,
+                            publicId: img.publicId,
+                        })),
+                    },
                 },
             });
 
-            setUploadQueue([]);
-
             toast({
-                title: "Property Created Successfully!",
-                description: `"${values.title}" has been listed.`,
+                title: "Property Updated Successfully!",
+                description: `"${values.title}" modifications saved.`,
             });
 
-            if (data?.createProperty?.id) {
-                router.push(`/properties/${data.createProperty.id}`);
-            } else {
-                router.push("/account/property");
-            }
+            const targetId = data?.updateProperty?.id || propertyId;
+            router.push(`/properties/${targetId}`);
         } catch (err: any) {
             const errMsg = CombinedGraphQLErrors.is(err)
                 ? err.errors[0]?.message
-                : err.message || "Unable to create property";
+                : err.message || "Unable to update property";
 
             setServerError(errMsg);
 
             toast({
                 variant: "destructive",
-                title: "Property Creation Failed",
+                title: "Update Failed",
                 description: errMsg,
             });
         }
     };
 
+    if (fetchingProperty) {
+        return (
+            <div className="flex min-h-[400px] w-full items-center justify-center">
+                <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-8 w-8 animate-spin text-[var(--color-brass)]" />
+                    <p className="text-sm font-medium text-zinc-500">Fetching property details...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (fetchError) {
+        return (
+            <div className="flex min-h-[400px] w-full items-center justify-center">
+                <div className="text-center">
+                    <p className="text-sm text-[var(--color-danger)]">Failed to load property data.</p>
+                    <Link href="/account/property" className="text-xs text-primary underline mt-2 inline-block">
+                        Return to property listings
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex min-h-screen w-full justify-center p-3 sm:p-6 md:p-8">
+        <div className="flex  w-full justify-center p-3 sm:p-6 md:p-8">
             <div className="w-full max-w-6xl py-2 sm:py-6">
                 <Link
                     href="/account/property"
@@ -229,7 +310,7 @@ export default function NewProperty() {
                 <Card className="rounded-2xl border border-[var(--color-border)] shadow-sm overflow-hidden">
                     <CardContent className="p-4 sm:p-6 lg:p-8">
                         <h1 className="font-display text-lg sm:text-xl lg:text-2xl font-semibold mb-6">
-                            Add a new property
+                            Edit property
                         </h1>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -354,7 +435,7 @@ export default function NewProperty() {
                                         }`}
                                     >
                                         <Upload className="h-7 w-7 sm:h-8 sm:w-8 text-[var(--color-ink-muted)] mb-2" />
-                                        <span className="text-xs sm:text-sm font-medium">Upload Images</span>
+                                        <span className="text-xs sm:text-sm font-medium">Upload Additional Images</span>
                                         <span className="text-[11px] sm:text-xs text-[var(--color-ink-muted)] text-center mt-1">
                                             PNG, JPG, WebP (select multiple)
                                         </span>
@@ -366,7 +447,7 @@ export default function NewProperty() {
                                         </p>
                                     )}
 
-                                    {/* Queue Grid */}
+                                    {/* Queue / Existing Image Grid */}
                                     {uploadQueue.length > 0 && (
                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-3 mt-3">
                                             {uploadQueue.map((item) => {
@@ -385,7 +466,7 @@ export default function NewProperty() {
                                                                 alt="Property"
                                                                 className="object-cover h-full w-full"
                                                                 onError={(e) => {
-                                                                    console.error("Cloudinary image failed to load", e);
+                                                                    console.error("Image loading error", e);
                                                                 }}
                                                             />
                                                         ) : (
@@ -402,7 +483,7 @@ export default function NewProperty() {
                                                             </div>
                                                         )}
 
-                                                        {/* Success Overlay */}
+                                                        {/* Success / Existing Overlay */}
                                                         {isCompleted && (
                                                             <>
                                                                 <div className="absolute top-1.5 left-1.5 bg-green-600/90 p-0.5 rounded-full text-white">
@@ -455,13 +536,21 @@ export default function NewProperty() {
                                     </p>
                                 )}
 
-                                <div className="flex justify-end">
+                                <div className="flex justify-end gap-3">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => router.push("/account/property")}
+                                        className="px-6 h-11 sm:h-10 text-sm font-semibold"
+                                    >
+                                        Cancel
+                                    </Button>
                                     <Button
                                         type="submit"
-                                        disabled={isSubmitting || isCurrentlyUploading}
-                                        className="w-full sm:w-auto px-8 h-11 sm:h-10 text-sm font-semibold"
+                                        disabled={isSubmitting || isCurrentlyUploading || !isDirty}
+                                        className="px-8 h-11 sm:h-10 text-sm font-semibold"
                                     >
-                                        {isSubmitting ? "Saving property..." : "Create property"}
+                                        {isSubmitting ? "Saving changes..." : "Save changes"}
                                     </Button>
                                 </div>
                             </div>

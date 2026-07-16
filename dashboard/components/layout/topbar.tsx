@@ -1,17 +1,21 @@
 "use client";
+
 import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { Sun, Moon, Menu, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import {NotificationDropdown} from "@/dashboard/components/ui/NotificationDropdown";
+
 
 const TITLES: Record<string, string> = {
   "/account/": "Overview Analytics",
   "/account/property": "Properties Portfolio",
   "/account/leads": "Leads Pipeline",
   "/account/payments": "Payments & Financials",
+    "/account/enquiries": "Enquiry Management",
   "/account/staff": "Staff Management",
   "/account/activities": "Activity Audit Feed",
-  "/account/settings": "Account Settings",
+  // "/account/settings": "Account Settings",
 };
 
 function titleFor(pathname: string): string {
@@ -25,7 +29,11 @@ interface TopbarProps {
   isCollapsed: boolean;
 }
 
-export function Topbar({ onMenuToggle, onCollapseToggle, isCollapsed }: TopbarProps) {
+export function Topbar({
+                         onMenuToggle,
+                         onCollapseToggle,
+                         isCollapsed,
+                       }: TopbarProps) {
   const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -63,7 +71,10 @@ export function Topbar({ onMenuToggle, onCollapseToggle, isCollapsed }: TopbarPr
         </div>
 
         {/* Global Interface Controls Layout Row */}
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Isolated Real-time Notifications Bell Dropdown */}
+          <NotificationDropdown />
+
           {/* System Color Theme Toggler */}
           {mounted && (
               <button

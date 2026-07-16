@@ -10,7 +10,7 @@ import { Button } from "@/dashboard/components/ui/button";
 import { Input } from "@/dashboard/components/ui/input";
 import { Can } from "@/dashboard/components/auth/can";
 
-const STATUS_TABS = ["ALL", "AVAILABLE", "RESERVED", "SOLD"] as const;
+export const STATUS_TABS = ["ALL", "AVAILABLE", "RESERVED", "SOLD"] as const;
 
 interface PropertiesPageProps {
     variant?: "dashboard" | "public";
@@ -37,7 +37,7 @@ export default function Properties({ variant = "dashboard" }: PropertiesPageProp
         <div className={`space-y-6 sm:space-y-8 ${!isDashboard ? "container mx-auto px-4 sm:px-6 py-6 sm:py-8 max-w-7xl" : ""}`}>
             {/* Header Section */}
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
+                <div className='w-full'>
                     <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-display">
                         {isDashboard ? "Manage Properties" : "Explore Featured Properties"}
                     </h1>
@@ -48,29 +48,31 @@ export default function Properties({ variant = "dashboard" }: PropertiesPageProp
                     </p>
                 </div>
 
-                {isDashboard && (
-                    <Can do="manageProperties">
-                        <Link href="/account/property/new" className="w-full sm:w-auto">
-                            <Button variant="brass" className="w-full sm:w-auto cursor-pointer shadow-sm text-primary-foreground bg-primary font-bold hover:bg-primary/90 transition duration-200">
-                                <Plus className="h-4 w-4 mr-1.5" />
-                                Add property
-                            </Button>
-                        </Link>
-                    </Can>
-                )}
+                   <div>
+                       {isDashboard && (
+                           <Can do="manageProperties">
+                               <Link href="/account/property/new" className="w-full sm:w-auto">
+                                   <Button variant="brass" className="w--[4rem] sm:w-auto cursor-pointer shadow-sm text-primary-foreground bg-primary font-bold hover:bg-primary/90 transition duration-200">
+                                       <Plus className="h-4 w-4 mr-1.5" />
+                                       Add property
+                                   </Button>
+                               </Link>
+                           </Can>
+                       )}
+                   </div>
             </div>
 
             {/* Filter and Search Bar Card */}
             <div className="bg-card border border-border rounded-xl p-3 sm:p-4 shadow-sm flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 {/* Status Pills */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0 scrollbar-none -mx-1 px-1">
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-0 lg:pb-0 scrollbar-none -mx-1 px-1">
                     {STATUS_TABS.map((tab) => {
                         const isActive = status === tab;
                         return (
                             <button
                                 key={tab}
                                 onClick={() => setStatus(tab)}
-                                className={`rounded-lg sm:px-4 px-3.5 py-2 text-xs font-semibold tracking-wide uppercase transition-all duration-200 shrink-0 ${
+                                className={`cursor-pointer rounded-lg sm:px-4 px-3.5 py-2 text-xs font-semibold tracking-wide uppercase transition-all duration-200 shrink-0 ${
                                     isActive
                                         ? "bg-primary text-primary-foreground shadow-sm px-4 "
                                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -83,21 +85,21 @@ export default function Properties({ variant = "dashboard" }: PropertiesPageProp
                 </div>
 
                 {/* Search Input and Auxiliary Filters */}
-                <div className="flex items-center gap-2.5 w-full lg:w-auto">
-                    <div className="relative flex-1 lg:w-72">
-                        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                            placeholder="Search by area, type, title..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 h-10 w-full border-border bg-background focus-visible:ring-primary/20 text-sm"
-                        />
-                    </div>
+                {/*<div className="flex items-center gap-2.5 w-full lg:w-auto">*/}
+                {/*    <div className="relative flex-1 lg:w-72">*/}
+                {/*        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />*/}
+                {/*        <Input*/}
+                {/*            placeholder="Search by area, type, title..."*/}
+                {/*            value={search}*/}
+                {/*            onChange={(e) => setSearch(e.target.value)}*/}
+                {/*            className="pl-9 h-10 w-full border-border bg-background focus-visible:ring-primary/20 text-sm"*/}
+                {/*        />*/}
+                {/*    </div>*/}
 
-                    <Button variant="outline" size="lg" className="h-10 w-10 border-border shrink-0" aria-label="More Filters">
-                        <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
-                    </Button>
-                </div>
+                {/*    <Button variant="outline" size="lg" className="h-10 w-10 border-border shrink-0" aria-label="More Filters">*/}
+                {/*        <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />*/}
+                {/*    </Button>*/}
+                {/*</div>*/}
             </div>
 
             {/* Grid View */}

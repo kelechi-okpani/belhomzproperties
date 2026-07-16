@@ -4,7 +4,7 @@ import { createClient, Client } from "graphql-ws";
 import { useAuthStore } from "../store/auth-store";
 
 const GRAPHQL_WS_URL =
-  process.env.NEXT_PUBLIC_GRAPHQL_WS_URL ?? "ws://localhost:4000/graphql";
+  process.env.NEXT_PUBLIC_GRAPHQL_URL ?? "ws://localhost:9000/graphql";
 
 let client: Client | null = null;
 
