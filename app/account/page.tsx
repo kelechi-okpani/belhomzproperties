@@ -34,11 +34,27 @@ function formatCurrency(amount: number) {
 }
 
 function getGreeting() {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 17) return "Good afternoon";
-    return "Good evening";
+    const now = new Date();
+    const hour = now.getHours();
+
+    // Format the current time (e.g., "02:15 PM")
+    const timeString = now.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+
+    let greeting = "Good evening";
+    if (hour < 12) {
+        greeting = "Good morning";
+    } else if (hour < 17) {
+        greeting = "Good afternoon";
+    }
+
+    // return `${greeting}! The current time is ${timeString}`;
+    return `${greeting}! `;
 }
+
 
 export default function DashboardPage() {
     const user = useAuthStore((s) => s.user);
