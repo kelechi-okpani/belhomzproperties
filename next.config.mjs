@@ -37,17 +37,15 @@ const nextConfig = {
     async headers() {
         return [
             {
-                source: '/(.*)',
+                source: '/((?!) animate-.*|$)',
                 headers: [
                     {
                         key: 'Content-Security-Policy',
-                        value: "frame-src 'self' https://www.instagram.com; img-src 'self' https://res.cloudinary.com https://*.instagram.com https://*.cdninstagram.com data:;",
-                    },
+                        value: "img-src 'self' https://res.cloudinary.com https://*.instagram.com https://*.cdninstagram.com https://*.fbcdn.net https://www.google-analytics.com data:;", },
                 ],
             },
         ];
     },
-
     images: {
         unoptimized: true, // Moved this out of headers into the clean images config block
         qualities: [70, 75],
@@ -79,6 +77,37 @@ const nextConfig = {
                 protocol: 'http',
                 hostname: 'localhost',
                 port: '9000',
+                pathname: '/api/proxy-image/**',
+            },
+            // new
+            {
+                protocol: 'https',
+                hostname: 'https://www.instagram.com/', // Removed duplicate https:// protocol prefix from hostname
+                port: '',
+                pathname: '/api/proxy-image/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'https://*.cdninstagram.com', // Removed duplicate https:// protocol prefix from hostname
+                port: '',
+                pathname: '/api/proxy-image/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'https://res.cloudinary.com', // Removed duplicate https:// protocol prefix from hostname
+                port: '',
+                pathname: '/api/proxy-image/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'https://*.instagram.co', // Removed duplicate https:// protocol prefix from hostname
+                port: '',
+                pathname: '/api/proxy-image/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'https://www.google-analytics.com', // Removed duplicate https:// protocol prefix from hostname
+                port: '',
                 pathname: '/api/proxy-image/**',
             },
         ],
