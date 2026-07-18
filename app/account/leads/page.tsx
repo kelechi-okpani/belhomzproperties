@@ -204,7 +204,7 @@ export default function LeadsPage() {
         </div>
 
         {/* Leads Container */}
-        <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+        <div className="rounded-lg border border-border bg-card shadow-xs overflow-hidden">
           <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center justify-between">
             <h2 className="text-base font-semibold text-foreground">
               All Leads List

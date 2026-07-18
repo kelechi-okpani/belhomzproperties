@@ -75,7 +75,6 @@ export default function EnquiriesPage() {
     const pagination = data?.getEnquiries?.pagination;
     const activeEnquiry = singleData?.getEnquiryById;
 
-    // Pagination calculations based on GraphQL response
     const totalItems = pagination?.total ?? enquiriesList.length;
     const totalPages = pagination?.pages ?? Math.max(1, Math.ceil(totalItems / pageSize));
 
@@ -91,9 +90,22 @@ export default function EnquiriesPage() {
                     config.color
                 )}
             >
-        {config.label}
-      </span>
+                {config.label}
+            </span>
         );
+    };
+
+    // Helper to sanitize phone numbers for WhatsApp public URLs
+    const getWhatsAppLink = (phone: string, name: string, subject: string) => {
+        const cleanPhone = phone.replace(/\D/g, "");
+        const formattedPhone = cleanPhone.startsWith("0") && cleanPhone.length === 11
+            ? `234${cleanPhone.substring(1)}`
+            : cleanPhone;
+
+        const text = encodeURIComponent(
+            `Hello ${name},\n\nI am reaching out regarding your inquiry on "${subject || "General Inquiry"}".`
+        );
+        return `https://wa.me/${formattedPhone}?text=${text}`;
     };
 
     return (
@@ -109,7 +121,6 @@ export default function EnquiriesPage() {
                     </p>
                 </div>
 
-                {/* Status Filter Dropdown */}
                 <div className="flex items-center gap-2 self-start sm:self-auto">
                     <Filter className="h-4 w-4 text-muted-foreground" />
                     <select
@@ -129,16 +140,16 @@ export default function EnquiriesPage() {
                 </div>
             </div>
 
-            {/* Enquiries Card / Table Container */}
-            <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+            {/* Enquiries Card Container */}
+            <div className="rounded-lg border border-border bg-card shadow-xs overflow-hidden">
                 <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center justify-between">
                     <h2 className="text-base font-semibold text-foreground">Inquiry Records</h2>
                     <span className="text-xs text-muted-foreground font-mono">
-            Showing {enquiriesList.length} of {totalItems}
-          </span>
+                        Showing {enquiriesList.length} of {totalItems}
+                    </span>
                 </div>
 
-                {/* Desktop Table View (Hidden under `md` breakpoint) */}
+                {/* Desktop Table View */}
                 <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left text-xs">
                         <thead className="bg-muted/20 border-b border-border text-muted-foreground uppercase text-[10px] font-semibold tracking-wider">
@@ -180,9 +191,9 @@ export default function EnquiriesPage() {
                                         </div>
                                     </td>
                                     <td className="px-5 py-3.5 max-w-[240px]">
-                      <span className="font-medium text-foreground line-clamp-1">
-                        {item.subject || "No Subject"}
-                      </span>
+                                            <span className="font-medium text-foreground line-clamp-1">
+                                                {item.subject || "No Subject"}
+                                            </span>
                                     </td>
                                     <td className="px-5 py-3.5">
                                         {getStatusBadge(item.status)}
@@ -207,7 +218,7 @@ export default function EnquiriesPage() {
                     </table>
                 </div>
 
-                {/* Mobile Data Cards View (Rendered strictly under `md` breakpoint) */}
+                {/* Mobile Data Cards View */}
                 <div className="divide-y divide-border md:hidden">
                     {loading && enquiriesList.length === 0 ? (
                         <div className="py-12 text-center text-muted-foreground">
@@ -235,18 +246,18 @@ export default function EnquiriesPage() {
                                 </div>
 
                                 <div>
-                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium block">
-                    Subject
-                  </span>
+                                    <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium block">
+                                        Subject
+                                    </span>
                                     <p className="text-xs font-medium text-foreground line-clamp-2 mt-0.5">
                                         {item.subject || "No Subject"}
                                     </p>
                                 </div>
 
                                 <div className="flex items-center justify-between pt-2 border-t border-border/50">
-                  <span className="text-[11px] text-muted-foreground font-mono">
-                    {formatRelativeTime(item.createdAt)}
-                  </span>
+                                    <span className="text-[11px] text-muted-foreground font-mono">
+                                        {formatRelativeTime(item.createdAt)}
+                                    </span>
                                     <Button
                                         onClick={() => handleOpenModal(item._id)}
                                         variant="outline"
@@ -282,14 +293,12 @@ export default function EnquiriesPage() {
             {/* Enquiry Detail Modal */}
             {selectedEnquiryId && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    {/* Backdrop */}
                     <div
                         className="fixed inset-0 bg-background/80 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
                         onClick={handleCloseModal}
                     />
 
-                    {/* Modal Panel */}
-                    <div className="relative z-10 w-full max-w-lg rounded-xl border border-border bg-card shadow-lg animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+                    <div className="relative z-10 w-full max-w-2xl rounded-xl border border-border bg-card shadow-lg animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
                         <div className="flex items-center justify-between border-b border-border p-4 bg-muted/30">
                             <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider">
                                 Enquiry Details
@@ -314,9 +323,9 @@ export default function EnquiriesPage() {
                                     <div className="flex items-center justify-between border-b border-border/60 pb-3">
                                         {getStatusBadge(activeEnquiry.status)}
                                         <span className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
-                      <Calendar className="h-3.5 w-3.5" />
+                                            <Calendar className="h-3.5 w-3.5" />
                                             {formatDateFull(activeEnquiry.createdAt)}
-                    </span>
+                                        </span>
                                     </div>
 
                                     {/* Sender Info Grid */}
@@ -327,37 +336,58 @@ export default function EnquiriesPage() {
                                         </div>
                                         <div className="flex items-center gap-2.5 text-muted-foreground">
                                             <Mail className="h-4 w-4 text-primary shrink-0" />
-                                            <a
-                                                href={`mailto:${activeEnquiry.email}`}
-                                                className="hover:underline text-foreground font-mono"
-                                            >
-                                                {activeEnquiry.email}
-                                            </a>
+                                            <span className="text-foreground font-mono break-all">{activeEnquiry.email}</span>
                                         </div>
                                         {activeEnquiry.phone && (
                                             <div className="flex items-center gap-2.5 text-muted-foreground">
                                                 <Phone className="h-4 w-4 text-primary shrink-0" />
-                                                <a
-                                                    href={`tel:${activeEnquiry.phone}`}
-                                                    className="hover:underline text-foreground font-mono"
-                                                >
-                                                    {activeEnquiry.phone}
-                                                </a>
+                                                <span className="text-foreground font-mono">{activeEnquiry.phone}</span>
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Subject & Message Content */}
                                     <div className="space-y-2">
-                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Subject
-                    </span>
+                                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                            Subject
+                                        </span>
                                         <h3 className="text-sm font-bold text-foreground">
                                             {activeEnquiry.subject || "No Subject"}
                                         </h3>
-                                        <div className="mt-2 rounded-lg border border-border bg-muted/30 p-4 text-xs text-foreground leading-relaxed whitespace-pre-wrap max-h-60 overflow-y-auto">
+                                        <div className="mt-2 rounded-lg border border-border bg-muted/30 p-4 text-xs text-foreground leading-relaxed whitespace-pre-wrap max-h-44 overflow-y-auto">
                                             {activeEnquiry.message || "No message body provided."}
                                         </div>
+                                    </div>
+
+                                    {/* Action Panel */}
+                                    <div className="pt-2 grid grid-cols-2 gap-3">
+
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="w-full border-border/80 hover:bg-muted gap-2 h-9 text-xs font-semibold shadow-xs"
+                                        >
+                                            <a
+                                                href={getWhatsAppLink(activeEnquiry.phone, activeEnquiry.fullName, activeEnquiry.subject)}
+                                            >
+                                                <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                                Contact via WhatsApp
+                                            </a>
+                                        </Button>
+
+
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            className="w-full border-border/80 hover:bg-muted gap-2 h-9 text-xs font-semibold shadow-xs"
+                                        >
+                                            <a
+                                                href={`mailto:${activeEnquiry.email}?subject=${encodeURIComponent("Re: " + (activeEnquiry.subject || "Your Inquiry"))}`}
+                                            >
+                                                <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
+                                                Contact via Email
+                                            </a>
+                                        </Button>
                                     </div>
                                 </>
                             ) : (
