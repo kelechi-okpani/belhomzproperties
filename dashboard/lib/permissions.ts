@@ -28,7 +28,7 @@ export const permissions = {
   viewSalesFunnel: ["OWNER"],
   viewTopAgents: ["OWNER"],
 
-  viewMyPerformance: ["AGENT"],
+  viewMyPerformance: ["OWNER", "AGENT", "STAFF"],
   viewAgentLeaderboard: ["OWNER"],
   viewMyActivityStats: ["OWNER", "AGENT", "STAFF"],
   viewRevenueTrend: ["OWNER"],

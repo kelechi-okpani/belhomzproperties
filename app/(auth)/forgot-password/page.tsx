@@ -10,7 +10,7 @@ import { ArrowLeft, MailCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Label } from "@/dashboard/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { forgotPasswordFormSchema, type ForgotPasswordFormValues } from "../../../dashboard/lib/schemas";
+import { forgotPasswordFormSchema, type ForgotPasswordFormValues } from "@/dashboard/lib/schemas";
 
 // Clean, explicitly-typed GraphQL mutation document matching your backend schema
 const FORGOT_PASSWORD_MUTATION = gql`

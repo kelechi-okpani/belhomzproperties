@@ -150,7 +150,7 @@ export default function NewLeadPage() {
 
     return (
         <div className="flex min-h-[calc(100vh-4rem)] w-full justify-center p-4 sm:p-5 lg:p-8">
-            <div className="w-full max-w-5xl py-2 sm:py-4">
+            <div className="w-full max-w-8xl py-6 sm:py-4">
                 {/* Back Link */}
                 <Link
                     href="/account/leads"
@@ -161,12 +161,12 @@ export default function NewLeadPage() {
                 </Link>
 
                 {/* Card Form Wrapper */}
-                <Card className="rounded-xl sm:rounded-2xl border border-[var(--color-border)] bg-[var(--color-paper-raised)]/30 shadow-sm overflow-hidden">
+                <Card className="rounded-lg sm:rounded-lg border border-[var(--color-border)]  shadow-sm overflow-hidden">
                     <CardContent className="p-5 sm:p-8 lg:p-10">
                         <div className="flex items-center gap-3 mb-8 pb-5 border-b border-[var(--color-border)]">
                             <UserPlus className="h-6 w-6 text-[var(--color-brass)] shrink-0" />
                             <h1 className="font-display text-xl sm:text-2xl font-semibold tracking-tight">
-                                Add New Lead
+                                Add New Clients / Lead
                             </h1>
                         </div>
 
@@ -183,7 +183,7 @@ export default function NewLeadPage() {
                                     <Input
                                         id="clientName"
                                         placeholder="cynthia philips"
-                                        className="h-10 sm:h-11 px-4 text-xs sm:text-sm"
+                                        className="h-12 sm:h-12 px-4 text-xs sm:text-sm"
                                         {...register("clientName")}
                                     />
                                     {errors.clientName && (
@@ -199,7 +199,7 @@ export default function NewLeadPage() {
                                     </Label>
                                     <select
                                         id="stage"
-                                        className="h-10 sm:h-11 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-paper-raised)] px-3.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brass)] text-foreground cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:9px_9px] bg-[right_1rem_center] bg-no-repeat px-4"
+                                        className="h-12 sm:h-12 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-paper-raised)] px-3.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brass)] text-foreground cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:9px_9px] bg-[right_1rem_center] bg-no-repeat px-4"
                                         {...register("stage")}
                                     >
                                         <option value="NEW" className="py-2">New</option>
@@ -222,7 +222,7 @@ export default function NewLeadPage() {
                                         id="clientPhone"
                                         type="tel"
                                         placeholder="+234 800 000 0000"
-                                        className="h-10 sm:h-11 px-4 text-xs sm:text-sm font-mono"
+                                        className="h-12 sm:h-12 px-4 text-xs sm:text-sm font-mono"
                                         {...register("clientPhone")}
                                     />
                                     {errors.clientPhone && (
@@ -240,7 +240,7 @@ export default function NewLeadPage() {
                                         id="clientEmail"
                                         type="email"
                                         placeholder="cynthiaphilips@belhomz.com"
-                                        className="h-10 sm:h-11 px-4 text-xs sm:text-sm font-mono"
+                                        className="h-12 sm:h-12 px-4 text-xs sm:text-sm font-mono"
                                         {...register("clientEmail")}
                                     />
                                     {errors.clientEmail && (
@@ -265,7 +265,7 @@ export default function NewLeadPage() {
                                     <select
                                         id="property"
                                         disabled={loadingProperties}
-                                        className="h-10 sm:h-11 px-4 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-paper-raised)] px-3.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brass)] text-foreground cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:9px_9px] bg-[right_1rem_center] bg-no-repeat disabled:opacity-50"
+                                        className="h-12 sm:h-12 px-4 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-paper-raised)] px-3.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brass)] text-foreground cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23888888%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:9px_9px] bg-[right_1rem_center] bg-no-repeat disabled:opacity-50"
                                         {...register("property")}
                                     >
                                         <option value="" className="py-2">
@@ -289,7 +289,7 @@ export default function NewLeadPage() {
                                     <Input
                                         id="assignedAgentDisplay"
                                         value={loadingMe ? "Loading agent details..." : currentUserName}
-                                        className="h-10 sm:h-11 px-4 text-xs sm:text-sm bg-[var(--color-paper-raised)]/50 text-[var(--color-ink)]"
+                                        className="h-12 sm:h-12 px-4 text-xs sm:text-sm bg-[var(--color-paper-raised)]/50 text-[var(--color-ink)]"
                                         readOnly
                                     />
                                     {errors.assignedAgent && (

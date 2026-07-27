@@ -36,7 +36,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     />
 
                     <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gradient-to-b from-background to-secondary/20 animate-in fade-in duration-300">
-                        <div className="max-w-7xl mx-auto w-full">{children}</div>
+                        <div className="max-w-8xl mx-auto w-full">{children}</div>
                     </main>
                 </div>
             </div>

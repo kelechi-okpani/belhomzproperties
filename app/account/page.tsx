@@ -67,6 +67,7 @@ export default function DashboardPage() {
         setMounted(true);
     }, []);
 
+
     const data = rawData?.analytics;
     const availability = data?.propertyAvailability;
     const pendingCount = data?.pendingPayments?.length ?? 0;

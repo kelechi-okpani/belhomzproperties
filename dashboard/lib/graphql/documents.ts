@@ -396,30 +396,30 @@ export const SCHEDULE_INSPECTION_MUTATION = gql`
     }
 `;
 
-export const ADD_LEAD_ACTIVITY_MUTATION = gql`
-    mutation AddLeadActivity($addLeadActivityId: ID!, $note: String!) {
-      addLeadActivity(id: $addLeadActivityId, note: $note) {
-        id
-        clientName
-        clientPhone
-        clientEmail
-        property
-        assignedAgent
-        stage
-        activities {
-          note
-          createdBy
-          createdAt
-        }
-        inspection {
-          scheduledAt
-          location
-          notes
-          completed
-        }
-        createdAt
-        updatedAt
-      }
+export const RESCHEDULE_INSPECTION_MUTATION = gql`
+    mutation RescheduleInspection($input: RescheduleInspectionInput!, $rescheduleInspectionId: ID!) {
+  rescheduleInspection(input: $input, id: $rescheduleInspectionId) {
+    id
+    clientName
+    clientPhone
+    clientEmail
+    property
+    assignedAgent
+    stage
+    activities {
+      note
+      createdBy
+      createdAt
+    }
+    inspection {
+      scheduledAt
+      location
+      notes
+      completed
+    }
+    createdAt
+    updatedAt
+  }
 }
 `
 

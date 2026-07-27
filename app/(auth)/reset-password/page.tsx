@@ -7,14 +7,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@apollo/client/react";
 import { gql } from "@apollo/client";
 import { useState, Suspense } from "react";
-import { Eye, EyeOff, ShieldCheck, ArrowLeft, Loader2 } from "lucide-react";
+import { Eye, EyeOff, ShieldCheck, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input, Label } from "../../../dashboard/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { resetPasswordFormSchema, type ResetPasswordFormValues } from "../../../dashboard/lib/schemas";
 
-// Clean, explicitly-typed GraphQL mutation document matching your backend schema
- const RESET_PASSWORD_MUTATION = gql`
+const RESET_PASSWORD_MUTATION = gql`
   mutation ResetPassword($token: String!, $newPassword: String!) {
     resetPassword(token: $token, newPassword: $newPassword)
   }
@@ -26,7 +25,7 @@ function ResetPasswordForm() {
   const token = searchParams.get("token");
 
   const [serverError, setServerError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -49,29 +48,37 @@ function ResetPasswordForm() {
     setServerError(null);
 
     try {
-      await resetPassword({
+      const { data }:any = await resetPassword({
         variables: {
           token,
           newPassword: values.newPassword,
         },
       });
 
-      setSuccess(true);
-      setTimeout(() => router.push("/login"), 2000);
-    } catch (err: any) {
-      const graphQLErrors = err?.graphQLErrors;
-      if (graphQLErrors && graphQLErrors.length > 0) {
-        setServerError(graphQLErrors[0].message || "This reset link is invalid or has expired.");
-      } else {
-        setServerError(err?.message || "Unable to reach the server. Please try again.");
+      if (data?.resetPassword) {
+        // If API returns string, use it. If API returns boolean true, use the default string message.
+        const message =
+            typeof data.resetPassword === "string"
+                ? data.resetPassword
+                : "Password updated successfully. Redirecting you to sign in…";
+
+        setSuccessMessage(message);
+        setTimeout(() => router.push("/login"), 2000);
       }
+    } catch (err: any) {
+      const errorMessage =
+          err?.graphQLErrors?.[0]?.message ||
+          err?.networkError?.message ||
+          err?.message ||
+          "This reset link is invalid or has expired.";
+
+      setServerError(errorMessage);
     }
   };
 
   return (
       <Card className="border border-border shadow-xl bg-card text-card-foreground max-w-md w-full mx-auto rounded-lg">
         <CardContent className="p-6 sm:p-8">
-          {/* Back navigation element aligned with muted theme tokens */}
           <Link
               href="/login"
               className="mb-6 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors group"
@@ -86,13 +93,13 @@ function ResetPasswordForm() {
             </h1>
           </div>
 
-          {success ? (
+          {successMessage ? (
               <div className="text-center space-y-4 py-4 animate-in fade-in duration-300">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                   <ShieldCheck className="h-6 w-6" />
                 </div>
                 <p className="rounded-lg bg-secondary/50 border border-border px-4 py-3.5 text-sm font-medium text-foreground leading-relaxed shadow-inner">
-                  Password updated securely. Redirecting you to sign in…
+                  {successMessage}
                 </p>
               </div>
           ) : (
@@ -102,7 +109,13 @@ function ResetPasswordForm() {
                 </p>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                  {/* New Password Input Field */}
+                  {serverError && (
+                      <div className="flex items-center gap-2 rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-xs sm:text-sm font-medium text-destructive leading-relaxed animate-in fade-in duration-200">
+                        <AlertCircle className="h-4 w-4 shrink-0" />
+                        <span>{serverError}</span>
+                      </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label
                         htmlFor="newPassword"
@@ -135,7 +148,6 @@ function ResetPasswordForm() {
                     )}
                   </div>
 
-                  {/* Confirm Password Input Field */}
                   <div className="space-y-2">
                     <Label
                         htmlFor="confirmPassword"
@@ -168,14 +180,6 @@ function ResetPasswordForm() {
                     )}
                   </div>
 
-                  {/* Server Error Display */}
-                  {serverError && (
-                      <p className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-xs sm:text-sm font-medium text-destructive leading-relaxed animate-in fade-in duration-200">
-                        {serverError}
-                      </p>
-                  )}
-
-                  {/* Submit Button */}
                   <Button
                       type="submit"
                       variant="default"

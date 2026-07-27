@@ -37,10 +37,7 @@ const STAGES = [
   { key: "CLOSED_LOST", label: "Closed Lost", color: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" },
 ] as const;
 
-// Stages restricted once an inspection is scheduled/booked
 const RESTRICTED_PAST_INSPECTION = ["NEW", "CONTACTED"];
-
-// Stages considered at or past inspection
 const AT_OR_PAST_INSPECTION = [
   "INSPECTION_BOOKED",
   "NEGOTIATION",
@@ -134,12 +131,12 @@ export default function LeadsPage() {
   };
 
   return (
-      <div className="space-y-6 sm:space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="space-y-8 max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-              Leads Management
+              Client Management
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
               {loading
@@ -158,7 +155,7 @@ export default function LeadsPage() {
         </div>
 
         {/* Stage Summary Cards / Drag Targets */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
           {STAGES.map(({ key, label }) => {
             const stageCount = leadsByStage(key).length;
             const percentage = leads.length
@@ -176,22 +173,22 @@ export default function LeadsPage() {
                     onDragLeave={() => setDragOverStage(null)}
                     onDrop={(e) => handleDrop(e, key)}
                     className={cn(
-                        "group relative flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-all duration-200 shadow-xs hover:border-primary/40",
+                        "group relative flex flex-col justify-between rounded-xl border border-border bg-card p-5 transition-all duration-200 shadow-sm hover:border-primary/40",
                         isDraggingOver &&
                         "ring-2 ring-primary border-dashed border-primary bg-primary/5 shadow-md scale-[1.02]"
                     )}
                 >
-                  <div className="flex items-start justify-between gap-1.5">
-                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider line-clamp-1">
+                  <div className="flex items-start justify-between gap-2">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider line-clamp-1">
                   {label}
                 </span>
-                    <span className="text-[11px] font-mono text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
+                    <span className="text-[11px] font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded-md font-medium">
                   {percentage}%
                 </span>
                   </div>
 
-                  <div className="mt-3 flex items-baseline justify-between">
-                <span className="text-2xl sm:text-3xl font-extrabold font-mono tracking-tight text-foreground">
+                  <div className="mt-4 flex items-baseline justify-between">
+                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-foreground">
                   {stageCount}
                 </span>
                     <span className="text-xs text-muted-foreground font-medium">
@@ -204,12 +201,12 @@ export default function LeadsPage() {
         </div>
 
         {/* Leads Container */}
-        <div className="rounded-lg border border-border bg-card shadow-xs overflow-hidden">
-          <div className="px-5 py-4 border-b border-border bg-muted/30 flex items-center justify-between">
+        <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-border bg-muted/20 flex items-center justify-between">
             <h2 className="text-base font-semibold text-foreground">
-              All Leads List
+              All Leads
             </h2>
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="text-xs text-muted-foreground font-mono bg-background border border-border px-2.5 py-1 rounded-md">
             Showing {leads.length} of {totalItems}
           </span>
           </div>
@@ -217,15 +214,15 @@ export default function LeadsPage() {
           {/* Desktop Table View */}
           <div className="hidden md:block overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10">
+              <TableHeader className="bg-muted/30">
                 <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="w-[12px]"></TableHead>
-                  <TableHead className="font-semibold text-foreground">Client</TableHead>
-                  <TableHead className="font-semibold text-foreground">Contact</TableHead>
-                  <TableHead className="font-semibold text-foreground">Property</TableHead>
-                  <TableHead className="font-semibold text-foreground">Timeline</TableHead>
-                  <TableHead className="font-semibold text-foreground">Stage</TableHead>
-                  <TableHead className="text-right font-semibold text-foreground">Actions</TableHead>
+                  <TableHead className="w-[48px] px-4 py-3.5"></TableHead>
+                  <TableHead className="font-semibold text-foreground px-6 py-3.5 text-xs uppercase tracking-wider">Client</TableHead>
+                  <TableHead className="font-semibold text-foreground px-6 py-3.5 text-xs uppercase tracking-wider">Contact</TableHead>
+                  <TableHead className="font-semibold text-foreground px-6 py-3.5 text-xs uppercase tracking-wider">Property</TableHead>
+                  <TableHead className="font-semibold text-foreground px-6 py-3.5 text-xs uppercase tracking-wider">Timeline</TableHead>
+                  <TableHead className="font-semibold text-foreground px-6 py-3.5 text-xs uppercase tracking-wider">Stage</TableHead>
+                  <TableHead className="text-right font-semibold text-foreground px-6 py-3.5 text-xs uppercase tracking-wider">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -249,67 +246,69 @@ export default function LeadsPage() {
                           onDragStart={(e) =>
                               e.dataTransfer.setData("text/lead-id", leadId)
                           }
-                          className="group border-border hover:bg-muted/40 transition-colors cursor-grab active:cursor-grabbing"
+                          className="group border-border hover:bg-muted/30 transition-colors cursor-grab active:cursor-grabbing"
                       >
-                        <TableCell className="pl-3 pr-0 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors">
+                        <TableCell className="px-4 py-5 text-muted-foreground/30 group-hover:text-muted-foreground/70 transition-colors">
                           <GripVertical className="h-4 w-4" />
                         </TableCell>
-                        <TableCell className="font-medium">
-                          <Link
-                              href={`/account/leads/${leadId}`}
-                              className="font-semibold text-foreground hover:text-primary transition-colors capitalize"
-                          >
-                            {lead.clientName || "Unnamed Lead"}
-                          </Link>
+                        <TableCell className="px-6 py-5">
+                          <div className="flex flex-col">
+                            <Link
+                                href={`/account/leads/${leadId}`}
+                                className="font-semibold text-foreground hover:text-primary transition-colors capitalize text-sm"
+                            >
+                              {lead.clientName || "Unnamed Lead"}
+                            </Link>
+                          </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <Phone className="h-3.5 w-3.5" />
+                        <TableCell className="px-6 py-5">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground font-mono">
+                            <Phone className="h-3.5 w-3.5 shrink-0 text-muted-foreground/70" />
                             <span>{lead.clientPhone || "—"}</span>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1.5 text-xs text-foreground capitalize">
-                            <Home className="h-3.5 w-3.5 text-muted-foreground" />
-                            <span className="line-clamp-1">{lead.property || "—"}</span>
+                        <TableCell className="px-6 py-5">
+                          <div className="flex items-center gap-2 text-xs text-foreground font-medium capitalize">
+                            <Home className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                            <span className="line-clamp-1 max-w-[200px]">{lead.property || "—"}</span>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col gap-1 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <span className="font-medium text-foreground">Created:</span>
+                        <TableCell className="px-6 py-5">
+                          <div className="flex flex-col gap-1.5 text-xs">
+                            <div className="flex items-center gap-1.5 text-muted-foreground">
+                              <span className="font-medium text-foreground/80">Created:</span>
                               <span>{createdDateFormatted || "—"}</span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              <span className="font-medium text-foreground">Inspection:</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-medium text-foreground/80">Inspection:</span>
                               {inspectionDateFormatted ? (
                                   <span className="text-emerald-600 dark:text-emerald-400 font-medium">{inspectionDateFormatted}</span>
                               ) : (
-                                  <span className="italic text-amber-600/80 dark:text-amber-500/80">No inspection fixed</span>
+                                  <span className="italic text-muted-foreground/70">Not scheduled</span>
                               )}
                             </div>
                           </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="px-6 py-5">
                           <Select
                               value={lead.stage}
                               disabled={!canChangeStage}
                               onValueChange={(value) => handleStageChange(leadId, value)}
                           >
-                            <SelectTrigger className={cn("h-8 w-[160px] text-xs font-medium border", getStageColor(lead.stage))}>
+                            <SelectTrigger className={cn("h-8 w-[160px] text-xs font-semibold rounded-lg border shadow-2xs transition-all", getStageColor(lead.stage))}>
                               <SelectValue placeholder="Select stage" />
                             </SelectTrigger>
                             <SelectContent>
                               {availableStages.map((s) => (
-                                  <SelectItem key={s.key} value={s.key} className="text-xs">
+                                  <SelectItem key={s.key} value={s.key} className="text-xs font-medium">
                                     {s.label}
                                   </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </TableCell>
-                        <TableCell className="text-right">
-                          <Button asChild variant="ghost" size="sm" className="h-8 px-2 text-xs">
+                        <TableCell className="px-6 py-5 text-right">
+                          <Button asChild variant="ghost" size="sm" className="h-8 px-3 text-xs hover:bg-muted font-medium">
                             <Link href={`/account/leads/${leadId}`} className="flex items-center gap-1.5">
                               <Edit className="h-3.5 w-3.5 text-muted-foreground" />
                               Edit
@@ -323,7 +322,7 @@ export default function LeadsPage() {
             </Table>
           </div>
 
-          {/* Mobile Data Cards View (Rendered only under `md` breakpoint) */}
+          {/* Mobile Data Cards View */}
           <div className="divide-y divide-border md:hidden">
             {leads.map((lead: any) => {
               const leadId = lead.id || lead._id;
@@ -339,42 +338,42 @@ export default function LeadsPage() {
               });
 
               return (
-                  <div key={leadId} className="p-4 space-y-3 bg-card">
-                    <div className="flex items-start justify-between gap-2">
+                  <div key={leadId} className="p-5 space-y-4 bg-card">
+                    <div className="flex items-start justify-between gap-3">
                       <div>
                         <Link
                             href={`/account/leads/${leadId}`}
-                            className="text-base font-semibold text-foreground hover:text-primary transition-colors capitalize"
+                            className="text-base font-bold text-foreground hover:text-primary transition-colors capitalize"
                         >
                           {lead.clientName || "Unnamed Lead"}
                         </Link>
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-                          <Phone className="h-3 w-3" />
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono mt-1">
+                          <Phone className="h-3.5 w-3.5 text-muted-foreground/70" />
                           <span>{lead.clientPhone || "—"}</span>
                         </div>
                       </div>
-                      <Button asChild variant="outline" size="sm" className="h-8 text-xs">
+                      <Button asChild variant="outline" size="sm" className="h-8 text-xs font-medium">
                         <Link href={`/account/leads/${leadId}`}>
-                          <Edit className="h-3.5 w-3.5 mr-1" />
+                          <Edit className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
                           Edit
                         </Link>
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/50 text-xs">
+                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-border/60 text-xs">
                       <div>
-                        <span className="text-muted-foreground block text-[11px] uppercase tracking-wide">Property</span>
-                        <span className="font-medium text-foreground capitalize line-clamp-1">{lead.property || "—"}</span>
+                        <span className="text-muted-foreground block text-[10px] font-bold uppercase tracking-wider mb-0.5">Property</span>
+                        <span className="font-semibold text-foreground capitalize line-clamp-1">{lead.property || "—"}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground block text-[11px] uppercase tracking-wide">Inspection</span>
-                        <span className={cn("font-medium", inspectionDateFormatted ? "text-emerald-600 dark:text-emerald-400" : "italic text-amber-600/80")}>
-                      {inspectionDateFormatted || "None fixed"}
+                        <span className="text-muted-foreground block text-[10px] font-bold uppercase tracking-wider mb-0.5">Inspection</span>
+                        <span className={cn("font-medium", inspectionDateFormatted ? "text-emerald-600 dark:text-emerald-400" : "italic text-muted-foreground/70")}>
+                      {inspectionDateFormatted || "Not scheduled"}
                     </span>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center justify-between pt-3 border-t border-border/40">
                   <span className="text-xs text-muted-foreground">
                     Created {createdDateFormatted || "—"}
                   </span>
@@ -383,12 +382,12 @@ export default function LeadsPage() {
                           disabled={!canChangeStage}
                           onValueChange={(value) => handleStageChange(leadId, value)}
                       >
-                        <SelectTrigger className={cn("h-8 w-[140px] text-xs font-medium border", getStageColor(lead.stage))}>
+                        <SelectTrigger className={cn("h-8 w-[140px] text-xs font-semibold rounded-lg border", getStageColor(lead.stage))}>
                           <SelectValue placeholder="Stage" />
                         </SelectTrigger>
                         <SelectContent>
                           {availableStages.map((s) => (
-                              <SelectItem key={s.key} value={s.key} className="text-xs">
+                              <SelectItem key={s.key} value={s.key} className="text-xs font-medium">
                                 {s.label}
                               </SelectItem>
                           ))}
@@ -400,8 +399,8 @@ export default function LeadsPage() {
             })}
           </div>
 
-          {/* Pagination footer */}
-          <div className="px-4 py-3 border-t border-border bg-muted/10">
+          {/* Pagination Footer */}
+          <div className="px-6 py-4 border-t border-border bg-muted/10">
             <CustomPagination
                 currentPage={page}
                 totalPages={totalPages}
