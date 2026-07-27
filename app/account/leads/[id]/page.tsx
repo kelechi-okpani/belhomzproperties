@@ -307,6 +307,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     },
   });
 
+
   const resetInspectionForm = () => {
     setInspectionDatePart("");
     setInspectionTimePart("09:00");
